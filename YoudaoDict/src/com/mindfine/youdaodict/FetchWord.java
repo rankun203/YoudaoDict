@@ -1,5 +1,7 @@
 package com.mindfine.youdaodict;
 
+import com.mindfine.youdaodict.fetcher.YoudaoCollinsFetcher;
+
 /**
  * <h3>爬单词<h3><br>
  * 1.指定单词和爬到的数据存储的位置,示例：java FetchWord -w many -d /home/mindfine/dict/<br>
@@ -9,10 +11,10 @@ package com.mindfine.youdaodict;
  * @author mindfine
  */
 public class FetchWord {
-	private static String sourceWord = "";
-	private static String saveToDic = "";
+	private static String word = "";
+	private static String saveToDir = "";
 	private static String srcWordFile = "";
-	public static String fetchFromURL = "http://dict.youdao.com/search";
+	private static String wantDic = "";
 
 	// resolve args from commandLine
 	public static void main(String[] args) {
@@ -21,18 +23,21 @@ public class FetchWord {
 			String arg = args[i];
 			if (arg != null && arg != "") {
 				if (arg.equals("-w")) {
-					sourceWord = args[i + 1];
+					word = args[i + 1];
 				} else if (arg.equals("-s")) {
 					srcWordFile = args[i + 1];
 				} else if (arg.equals("-d")) {
-					saveToDic = args[i + 1];
+					saveToDir = args[i + 1];
+				} else if (arg.equals("-c")) {
+					wantDic = args[i + 1];
 				}
 			}
 		}
 
-		System.out.println("sourceWord=" + sourceWord + ", saveToDic="
-				+ saveToDic + ", srcWordFile=" + srcWordFile);
-		
+		System.out.println("sourceWord=" + word + ", saveToDir="
+				+ saveToDir + ", srcWordFile=" + srcWordFile + ", wantDic=" + wantDic);
+
+		System.out.println(new YoudaoCollinsFetcher().getResFromWord(word));
 		
 	}
 }
