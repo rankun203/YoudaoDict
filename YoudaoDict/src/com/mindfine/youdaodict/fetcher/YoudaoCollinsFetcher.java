@@ -110,6 +110,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 				s.append(meanNo);// 现在是第几个例子
 				String statItem1 = statItem.child(1).text();// 例子的正文文字
 
+				//把句子中的关键词加上括号
 				Pattern p = Pattern.compile(word, Pattern.CASE_INSENSITIVE);
 				Matcher m = p.matcher(statItem1);
 				if (m.find()) {
@@ -118,9 +119,15 @@ public class YoudaoCollinsFetcher implements Fetcher {
 				}
 
 				s.append("\r\n");
-				Elements examplesLists = meanItem.select("div.exampleLists");
+				Elements examplesLists = meanItem.select("div.exampleLists");//例句们
 				for (Element exampleList : examplesLists) {
-
+					String liTitTemp = exampleList.select("span.collinsOrder").first().text();//就是那个”例“字
+					s.append(liTitTemp);
+					Elements liExampleBoxTemp = exampleList.select("div.examples").first().children();//英文和翻译
+					String lebt1 = liExampleBoxTemp.get(0).text();
+					s.append(lebt1 + "\r\n");
+					String lebt2 = liExampleBoxTemp.get(1).text();
+					s.append("    " + lebt2 + "\r\n");
 				}				
 			}
 		}
