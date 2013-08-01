@@ -1,6 +1,6 @@
 描述：网页词典内容截取器
 
-用法：FetchWord -w|-s -d
+用法：FetchWord -m <outputType> -w <word>|-s <file> -d <dir>|-f <file>
 
   -w     指定单词
   -d     指定路径存放抓取结果
@@ -10,8 +10,10 @@
            print
           可能的值有
            print    将结果打印在屏幕上
-           folder   将结果存入指定的文件夹中，参数列表中必须包含-d选项并指明存储的位置
+           folder   将结果存入指定的文件夹中
+                     参数列表中必须包含-d选项并指明存储的位置
            file     将结果存入单个文件中
+                     参数列表中必须包含-f选项并指明存储文件的位置
   -h     显示本帮助
 
 用法示例：
@@ -22,5 +24,6 @@ java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict
 2.获取hello的释义并将结果打印出来
 java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -w hello -d /home/mindfine/dict
 
+3.获取hello的释义并将结果存入 "/home/mindfine/dict/" 文件夹中
 请在项目主页报告程序的错误，欢迎任何形式的复制和转发
 项目主页：https://github.com/rankun203/YoudaoDict
