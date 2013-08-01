@@ -12,6 +12,7 @@ public class FetchWord {
 	private static String sourceWord = "";
 	private static String saveToDic = "";
 	private static String srcWordFile = "";
+	public static String fetchFromURL = "http://dict.youdao.com/search";
 
 	// resolve args from commandLine
 	public static void main(String[] args) {
@@ -29,7 +30,9 @@ public class FetchWord {
 			}
 		}
 
-		System.out.println("sourceWord = " + sourceWord + ", saveToDict= "
-				+ saveToDic + ", srcWordFile= " + srcWordFile);
+		System.out.println("sourceWord=" + sourceWord + ", saveToDic="
+				+ saveToDic + ", srcWordFile=" + srcWordFile);
+		
+		
 	}
 }
