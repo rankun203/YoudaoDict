@@ -6,6 +6,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
 /**
  * YoudaoCollinsFetcher可以从有道词典拦截Collins的释义
  * 
@@ -16,10 +20,29 @@ public class YoudaoCollinsFetcher implements Fetcher {
 
 	@Override
 	public String getResFromWord(String word) {
-		return fetchPage(word);
+		return jsoupFetcher(word);
 	}
 
 	
+	public String jsoupFetcher(String word){
+		String rtn = "";
+		String queryUrl = fetchFromURL + "?q=" + word;
+		try {
+			URL qu = new URL(queryUrl);
+			Document doc = Jsoup.parse(qu, 16000);
+			Element collinsRes = doc.getElementById("collinsResult");
+			rtn = collinsRes.html();
+		} catch (MalformedURLException e) {
+			System.err.println("ERROR, queryUrl is invalid.");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("open connection failed.");
+			e.printStackTrace();
+		} catch (NullPointerException e) {
+			return null;
+		}
+		return rtn;
+	}
 	/**
 	 * @param word 要查询的单词
 	 * @return 根据单词得到的整个页面
