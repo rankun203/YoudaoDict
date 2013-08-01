@@ -21,9 +21,16 @@
 1.查看帮助
 java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -h
 
-2.获取hello的释义并将结果打印出来
+2.获取 hello 的释义并将结果打印出来
 java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -w hello -d /home/mindfine/dict
 
-3.获取hello的释义并将结果存入 "/home/mindfine/dict/" 文件夹中
+3.获取 hello 的释义并将结果存入 "/home/mindfine/dict/" 文件夹中
+
+4.获取 hello 的释义并将结果存入 "/home/mindfine/dict.txt" 文件中
+
+5.解析 "/home/mindfine/dic.txt" 中的所有单词，并将释义存入 "/home/mindfine/dict/" 文件夹中
+
+6.解析 "/home/mindfine/dic.txt" 中的所有单词，并将释义写入 "/home/mindfine/dict.txt" 文件中
+
 请在项目主页报告程序的错误，欢迎任何形式的复制和转发
 项目主页：https://github.com/rankun203/YoudaoDict
