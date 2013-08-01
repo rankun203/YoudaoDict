@@ -113,7 +113,8 @@ public class YoudaoCollinsFetcher implements Fetcher {
 				Pattern p = Pattern.compile(word, Pattern.CASE_INSENSITIVE);
 				Matcher m = p.matcher(statItem1);
 				if (m.find()) {
-					s.append(m.group());
+					String wordTemp = m.group();
+					s.append(statItem1.replace(wordTemp, "[" + wordTemp + "]"));
 				}
 
 				s.append("\r\n");
