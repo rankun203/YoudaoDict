@@ -1,1 +1,6 @@
-/bin
+#dirs
+.settings/
+bin/
+
+#files
+.project
