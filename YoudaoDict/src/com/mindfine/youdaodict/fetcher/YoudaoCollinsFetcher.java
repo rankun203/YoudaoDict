@@ -115,15 +115,18 @@ public class YoudaoCollinsFetcher implements Fetcher {
 								starNo = 4;
 							else if (star.indexOf("5") != -1)
 								starNo = 5;
-							s.append(" [");
-							for (int i = 0; i < starNo; i++) {
-								if (i != (starNo - 1)) {
-									s.append("* ");
-								} else {
-									s.append("*");
+							if(starNo > 0) {
+								s.append(" [");
+								for (int i = 0; i < starNo; i++) {
+									if (i != (starNo - 1)) {
+										s.append("* ");
+									} else {
+										s.append("*");
+									}
 								}
+								s.append("]");
 							}
-							s.append("] ");
+							s.append(" ");
 						}
 						//变形
 						Elements additionalPtn = h4Tit.select("span.additional");

@@ -41,5 +41,10 @@ public class YoudaoPronouncer implements Pronouncer {
 	}
 	
 	
+	public static void main(String[] args) {
+		if(args.length > 0) {
+			new YoudaoPronouncer().pronounce(args[0]);			
+		}
+	}
 
 }
