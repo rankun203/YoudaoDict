@@ -2,6 +2,8 @@ package com.mindfine.youdaodict;
 
 import com.mindfine.youdaodict.fetcher.Fetcher;
 import com.mindfine.youdaodict.fetcher.YoudaoCollinsFetcher;
+import com.mindfine.youdaodict.pronouncer.Pronouncer;
+import com.mindfine.youdaodict.pronouncer.YoudaoPronouncer;
 
 /**
  * <h3>爬单词<h3><br>
@@ -22,6 +24,7 @@ public class FetchWord {
 	private static Fetcher.StyleType styleType;
 	private static String method = "";
 	private static Fetcher fetcher;
+	private static Pronouncer pronouncer;
 
 
 	/**
@@ -171,7 +174,10 @@ public class FetchWord {
 				fetcher = new YoudaoCollinsFetcher();
 				fetcher.setStyleType(styleType);
 				String rtnStr = fetcher.getResFromWord(word2);
+				
 				System.out.println(rtnStr);
+				pronouncer = new YoudaoPronouncer();
+				pronouncer.pronounce(word2);
 			}
 		} else {
 			System.out.println("抱歉，系统暂不支持该词典");
