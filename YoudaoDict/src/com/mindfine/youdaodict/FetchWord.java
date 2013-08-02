@@ -33,17 +33,16 @@ public class FetchWord {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String args0 = args[0];
-		if (args0 != null && !args0.equals("") && !args0.startsWith("-")) {
+		if (args[0] != null && !args[0].equals("") && !args[0].startsWith("-")) {
 			styleType = Fetcher.StyleType.plain;
 			dicType = Fetcher.DicType.youdaoCollins;
-			fetchAndPrint(args0);
+			fetchAndPrint(args[0]);
 			System.exit(0);
 		}
 
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
-			if (arg != null && arg != "") {
+			if (arg != null && !arg.equals("")) {
 				if (arg.equals("-iw")) {
 					word = args[i + 1];
 				} else if (arg.equals("-is")) {

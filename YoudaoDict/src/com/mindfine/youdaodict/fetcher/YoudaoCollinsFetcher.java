@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,92 +54,138 @@ public class YoudaoCollinsFetcher implements Fetcher {
 			System.err.println("open connection failed.\r\nNetwork may not accessible.");
 			e.printStackTrace();
 		} catch (NullPointerException e) {
-			System.out.println("NullPointer");
-			return null;
+			return "未找到相关单词，请检查拼写。";
 		}
 		return rtn;
 	}
 
+	/**
+	 * 解析整个页面，得到纯字符解释
+	 * @param doc 页面文档对象
+	 * @param word 单词
+	 * @return 查到的字符串
+	 */
 	private String getPlainExplain(Document doc, String word) {
 		StringBuilder s = new StringBuilder();
-		Element ctnEle = doc.getElementById("collinsResult").child(0).child(0)
-				.child(0).child(0);
-		Element headEle = ctnEle.child(0);
-		Element introEle = ctnEle.select("p.collins-intro").first();
-		Element meansEle = ctnEle.select("ul.ol").first();
+		LinkedList<String> titList = new LinkedList<String>();//存储大标题的链表
 		s.append("----------http://dict.youdao.com----------\r\n\r\n");
-		appendCtn(s, headEle.select("span.title"));
-		s.append(" ");
-		appendCtn(s, headEle.select("em.phonetic"));
-		
-		//几星词汇
-		String star = headEle.select("span.star").attr("class");
-		int starNo = 0;
-		if (star != null) {
-			if (star.indexOf("1") != -1)
-				starNo = 1;
-			else if (star.indexOf("2") != -1)
-				starNo = 2;
-			else if (star.indexOf("3") != -1)
-				starNo = 3;
-			else if (star.indexOf("4") != -1)
-				starNo = 4;
-			else if (star.indexOf("5") != -1)
-				starNo = 5;
-			s.append(" [");
-			for (int i = 0; i < starNo; i++) {
-				if (i != (starNo - 1)) {
-					s.append("* ");
-				} else {
-					s.append("*");
+		try {
+			Element collinsResult = doc.getElementById("collinsResult");
+			Elements transContainers = collinsResult.select("div.trans-container");
+			for(Element transContainer : transContainers) {//如果有多个transContainer
+				//找transContainer下的所有transContent
+				Elements transContents = transContainer.select("div.trans-content");
+				for(Element transContent : transContents) {//如果有多个transContent
+					//找transContent下的所有标题prContainers
+					Elements prContainers = transContent.select("div.pr-container");
+					for(Element prContainer : prContainers) {//如果有多个包含大分类的框框每个框框有一系列大分类
+						//找出这个框框下的所有大标题
+						Elements wordGroups = prContainer.select("p.wordGroup");
+						for(Element wordGroup : wordGroups) {
+							//拿出这个大标题的序号
+							Elements contentTitles = (wordGroup.select("a.nav-js"));
+							if(contentTitles != null && contentTitles.size() > 0) {
+								titList.push(contentTitles.first().text());
+							}
+						}
+					}
+					//找出transContent下所有wtContainer
+					Elements wtContainers = transContent.select("div.wt-container");
+					for(Element wtContainer : wtContainers) {
+						if(titList.size() > 0) {//如果还有什么大标题小标题的话，取出一个来
+							s.append("1." + titList.pop() + "\r\n----------------------------------------------\r\n");
+						}
+
+						//下面是标题，h4栏
+						Element h4Tit = wtContainer.select("h4").first();
+						appendCtn(s, h4Tit.select("span.title"));
+						s.append(" ");
+						appendCtn(s, h4Tit.select("em.phonetic"));
+						//几星词汇
+						String star = h4Tit.select("span.star").attr("class");
+						int starNo = 0;
+						if (star != null) {
+							if (star.indexOf("1") != -1)
+								starNo = 1;
+							else if (star.indexOf("2") != -1)
+								starNo = 2;
+							else if (star.indexOf("3") != -1)
+								starNo = 3;
+							else if (star.indexOf("4") != -1)
+								starNo = 4;
+							else if (star.indexOf("5") != -1)
+								starNo = 5;
+							s.append(" [");
+							for (int i = 0; i < starNo; i++) {
+								if (i != (starNo - 1)) {
+									s.append("* ");
+								} else {
+									s.append("*");
+								}
+							}
+							s.append("] ");
+						}
+						//变形
+						Elements additionalPtn = h4Tit.select("span.additional");
+						if (additionalPtn.size() > 0) {
+							s.append(additionalPtn.get(0).text() + " ");
+						}
+						s.append("|" + h4Tit.select("span.rank").text() + "| ");
+						if (additionalPtn.size() > 1) {
+							s.append(additionalPtn.get(1).text().trim() + " ");
+						}
+						
+						//collins-intro部分
+						Element collinsIntro = wtContainer.select("p.collins-intro").first();
+						if (collinsIntro != null) {
+							s.append("\r\n");
+							s.append("+---------------------------------\r\n");
+							s.append("|" + collinsIntro.text());
+							s.append("\r\n+---------------------------------\r\n");
+						}
+						
+						s.append("\r\n\r\n意义\r\n------------------------------------------------------\r\n");
+
+						// 开始解析释义部分
+						Element ulOlMeansEle = wtContainer.select("ul.ol").first(); 
+						for (Element meanItem : ulOlMeansEle.children()) {
+							Element collinsMajorTrans = meanItem.select("div.collinsMajorTrans").first();
+							String meanNo = collinsMajorTrans.select("span.collinsOrder").first().text();
+							appendCtn(s, meanNo);
+
+							String meanStr = collinsMajorTrans.select("p").first().text();//解释文字
+							//把句子中的关键词加上括号
+							Pattern p = Pattern.compile(word, Pattern.CASE_INSENSITIVE);
+							Matcher m = p.matcher(meanStr);
+							if (m.find()) {
+								String wordTemp = m.group();
+								s.append(meanStr.replace(wordTemp, "[" + wordTemp + "]"));
+							}
+							s.append("\r\n");
+
+							//例句
+							Elements examplesLists = meanItem.select("div.exampleLists");//例句们
+							for (Element exampleList : examplesLists) {
+								s.append("    ~");
+								appendCtn(s, exampleList.select("span.collinsOrder"));
+								s.append(exampleList.select("div.examples").get(0).child(0).text());
+								s.append("\r\n         ");
+								s.append(exampleList.select("div.examples").get(0).child(1).text());
+								s.append("\r\n");
+							}
+
+							s.append("------------------------------------------------------\r\n");
+						}
+
+					}
 				}
 			}
-			s.append("] ");
-		}
-		Elements additionalPtn = headEle.select("span.additional");
-		if (additionalPtn.size() > 0) {
-			s.append(additionalPtn.get(0).text() + " ");
-		}
-		s.append("|" + headEle.select("span.rank").text() + "| ");
-		if (additionalPtn.size() > 1) {
-			s.append(additionalPtn.get(1).text().trim() + " ");
-		}
-		if (introEle != null) {
-			s.append("\r\n");
-			s.append("+---------------------------------\r\n");
-			s.append("|" + introEle.text());
-			s.append("\r\n+---------------------------------\r\n");
-		}
-
-		s.append("\r\n------------------------------------------------------\r\n");
-		// 开始解析释义部分
-		for (Element meanItem : meansEle.children()) {
-			if(meanItem.children().size() > 0) {
-				Element statItem = meanItem.child(0);// 标有数字的句子
-				String meanNo = statItem.child(0).text().replaceAll("&nbsp;", "");
-				appendCtn(s, meanNo);
-
-				String statItem1 = statItem.child(1).text();// 例子的正文文字
-				//把句子中的关键词加上括号
-				Pattern p = Pattern.compile(word, Pattern.CASE_INSENSITIVE);
-				Matcher m = p.matcher(statItem1);
-				if (m.find()) {
-					String wordTemp = m.group();
-					s.append(statItem1.replace(wordTemp, "[" + wordTemp + "]"));
-				}
-
-				s.append("\r\n");
-				Elements examplesLists = meanItem.select("div.exampleLists");//例句们
-				for (Element exampleList : examplesLists) {
-					s.append("    ~");
-					appendCtn(s, exampleList.select("span.collinsOrder"));
-					s.append(exampleList.select("div.examples").get(0).child(0).text());
-					s.append("\r\n         ");
-					s.append(exampleList.select("div.examples").get(0).child(1).text());
-					s.append("\r\n");
-				}
-			}
-			s.append("------------------------------------------------------\r\n");
+			
+			
+	
+			
+		} catch (NullPointerException ne) {
+			System.out.println("解析未能完全成功，解析器可能已经失效。请重写解析器。");
 		}
 		return new String(s);
 	}
