@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -85,7 +84,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 							//拿出这个大标题的序号
 							Elements contentTitles = (wordGroup.select("a.nav-js"));
 							if(contentTitles != null && contentTitles.size() > 0) {
-								titList.push(contentTitles.first().text());
+								titList.add(contentTitles.first().text());
 							}
 						}
 					}
@@ -93,7 +92,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 					Elements wtContainers = transContent.select("div.wt-container");
 					for(Element wtContainer : wtContainers) {
 						if(titList.size() > 0) {//如果还有什么大标题小标题的话，取出一个来
-							s.append("1." + titList.pop() + "\r\n----------------------------------------------\r\n");
+							s.append("* " + titList.pop() + "\r\n----------------------------------------------\r\n");
 						}
 
 						//下面是标题，h4栏
@@ -133,7 +132,10 @@ public class YoudaoCollinsFetcher implements Fetcher {
 						if (additionalPtn.size() > 0) {
 							s.append(additionalPtn.get(0).text() + " ");
 						}
-						s.append("|" + h4Tit.select("span.rank").text() + "| ");
+						Elements h4TitRank = h4Tit.select("span.rank");
+						if(h4TitRank.size() > 0) {
+							s.append("|" + h4Tit.select("span.rank").text() + "| ");							
+						}
 						if (additionalPtn.size() > 1) {
 							s.append(additionalPtn.get(1).text().trim() + " ");
 						}
@@ -149,39 +151,45 @@ public class YoudaoCollinsFetcher implements Fetcher {
 						
 						s.append("\r\n\r\n意义\r\n------------------------------------------------------\r\n");
 
-						// 开始解析释义部分
-						Element ulOlMeansEle = wtContainer.select("ul.ol").first(); 
-						for (Element meanItem : ulOlMeansEle.children()) {
-							Element collinsMajorTrans = meanItem.select("div.collinsMajorTrans").first();
-							String meanNo = collinsMajorTrans.select("span.collinsOrder").first().text();
-							appendCtn(s, meanNo);
+						Elements ulOls = wtContainer.select("ul.ol");
+						for(Element ulOl : ulOls) {
+							
+							for (Element meanItem : ulOl.children()) {
+								
+								Elements collinsMajorTrans = meanItem.select("div.collinsMajorTrans");
+								if(collinsMajorTrans.size() > 0) {
+									String meanNo = collinsMajorTrans.first().select("span.collinsOrder").first().text();
+									appendCtn(s, meanNo);
+								}
 
-							String meanStr = collinsMajorTrans.select("p").text();//解释文字
-							//把句子中的关键词加上括号
-							Pattern p = Pattern.compile(word, Pattern.CASE_INSENSITIVE);
-							Matcher m = p.matcher(meanStr);
-							if (m.find()) {
-								String wordTemp = m.group();
-								s.append(meanStr.replace(wordTemp, "[" + wordTemp + "]"));
-							} else {
-								s.append(meanStr);
-							}
-							s.append("\r\n");
-
-							//例句
-							Elements examplesLists = meanItem.select("div.exampleLists");//例句们
-							for (Element exampleList : examplesLists) {
-								s.append("    ~");
-								appendCtn(s, exampleList.select("span.collinsOrder"));
-								s.append(exampleList.select("div.examples").get(0).child(0).text());
-								s.append("\r\n         ");
-								s.append(exampleList.select("div.examples").get(0).child(1).text());
+								String meanStr = collinsMajorTrans.select("p").text();//解释文字
+								//把句子中的关键词加上括号
+								Pattern p = Pattern.compile(word, Pattern.CASE_INSENSITIVE);
+								Matcher m = p.matcher(meanStr);
+								if (m.find()) {
+									String wordTemp = m.group();
+									s.append(meanStr.replace(wordTemp, "[" + wordTemp + "]"));
+								} else {
+									s.append(meanStr);
+								}
 								s.append("\r\n");
+
+								//例句
+								Elements examplesLists = meanItem.select("div.exampleLists");//例句们
+								for (Element exampleList : examplesLists) {
+									s.append("    ~");
+									appendCtn(s, exampleList.select("span.collinsOrder"));
+									s.append(exampleList.select("div.examples").get(0).child(0).text());
+									s.append("\r\n         ");
+									s.append(exampleList.select("div.examples").get(0).child(1).text());
+									s.append("\r\n");
+								}
+								if(examplesLists.size() > 0) {
+									s.append("------------------------------------------------------\r\n");
+								}
 							}
-
-							s.append("------------------------------------------------------\r\n");
 						}
-
+						//---
 					}
 				}
 			}
@@ -215,6 +223,19 @@ public class YoudaoCollinsFetcher implements Fetcher {
 	private boolean appendCtn(StringBuilder s, Elements eles) {
 		if (eles != null) {
 			String firstText = eles.first().text();
+			s.append(firstText);
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * 添加了非空判断的功能
+	 * @param s 要给谁后面追加字符串？
+	 * @param string 要从哪个元素中提取字符串？
+	 */
+	private boolean appendCtn(StringBuilder s, Element ele) {
+		if (ele != null) {
+			String firstText = ele.text();
 			s.append(firstText);
 			return true;
 		}
