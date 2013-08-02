@@ -156,13 +156,15 @@ public class YoudaoCollinsFetcher implements Fetcher {
 							String meanNo = collinsMajorTrans.select("span.collinsOrder").first().text();
 							appendCtn(s, meanNo);
 
-							String meanStr = collinsMajorTrans.select("p").first().text();//解释文字
+							String meanStr = collinsMajorTrans.select("p").text();//解释文字
 							//把句子中的关键词加上括号
 							Pattern p = Pattern.compile(word, Pattern.CASE_INSENSITIVE);
 							Matcher m = p.matcher(meanStr);
 							if (m.find()) {
 								String wordTemp = m.group();
 								s.append(meanStr.replace(wordTemp, "[" + wordTemp + "]"));
+							} else {
+								s.append(meanStr);
 							}
 							s.append("\r\n");
 
