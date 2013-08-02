@@ -28,8 +28,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 	}
 
 	/**
-	 * @param word
-	 *            要查询的单词
+	 * @param word 要查询的单词
 	 * @return 返回使用Jsoup取得的释义数据
 	 */
 	public String jsoupFetcher(String word) {
@@ -39,7 +38,9 @@ public class YoudaoCollinsFetcher implements Fetcher {
 			URL qu = new URL(queryUrl);
 			Document doc = Jsoup.parse(qu, 16000);
 			if (styleType == StyleType.plain) {
-				rtn = getPlainExplain(doc, word);
+				if(doc != null) {
+					rtn = getPlainExplain(doc, word);
+				}
 			} else {
 				Element collinsRes = doc.getElementById("collinsResult");
 				rtn = collinsRes.html();
@@ -48,10 +49,10 @@ public class YoudaoCollinsFetcher implements Fetcher {
 			System.err.println("ERROR, queryUrl is invalid.");
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.err
-					.println("open connection failed.\r\nNetwork may not accessible.");
+			System.err.println("open connection failed.\r\nNetwork may not accessible.");
 			e.printStackTrace();
 		} catch (NullPointerException e) {
+			System.out.println("NullPointer");
 			return null;
 		}
 		return rtn;
@@ -64,9 +65,12 @@ public class YoudaoCollinsFetcher implements Fetcher {
 		Element headEle = ctnEle.child(0);
 		Element introEle = ctnEle.select("p.collins-intro").first();
 		Element meansEle = ctnEle.select("ul.ol").first();
-		s.append("----------http://dict.youdao.com----------\r\n");
-		s.append(headEle.select("span.title").text());
-		s.append(" " + headEle.select("em.phonetic").text());
+		s.append("----------http://dict.youdao.com----------\r\n\r\n");
+		appendCtn(s, headEle.select("span.title"));
+		s.append(" ");
+		appendCtn(s, headEle.select("em.phonetic"));
+		
+		//几星词汇
 		String star = headEle.select("span.star").attr("class");
 		int starNo = 0;
 		if (star != null) {
@@ -98,18 +102,22 @@ public class YoudaoCollinsFetcher implements Fetcher {
 		if (additionalPtn.size() > 1) {
 			s.append(additionalPtn.get(1).text().trim() + " ");
 		}
-		s.append("\r\n");
-		s.append(introEle.text());
-		s.append("\r\n");
+		if (introEle != null) {
+			s.append("\r\n");
+			s.append("+---------------------------------\r\n");
+			s.append("|" + introEle.text());
+			s.append("\r\n+---------------------------------\r\n");
+		}
 
+		s.append("\r\n------------------------------------------------------\r\n");
 		// 开始解析释义部分
 		for (Element meanItem : meansEle.children()) {
 			if(meanItem.children().size() > 0) {
 				Element statItem = meanItem.child(0);// 标有数字的句子
-				String meanNo = statItem.child(0).text().replaceAll("&nbsp;", " ");
-				s.append(meanNo);// 现在是第几个例子
-				String statItem1 = statItem.child(1).text();// 例子的正文文字
+				String meanNo = statItem.child(0).text().replaceAll("&nbsp;", "");
+				appendCtn(s, meanNo);
 
+				String statItem1 = statItem.child(1).text();// 例子的正文文字
 				//把句子中的关键词加上括号
 				Pattern p = Pattern.compile(word, Pattern.CASE_INSENSITIVE);
 				Matcher m = p.matcher(statItem1);
@@ -121,19 +129,43 @@ public class YoudaoCollinsFetcher implements Fetcher {
 				s.append("\r\n");
 				Elements examplesLists = meanItem.select("div.exampleLists");//例句们
 				for (Element exampleList : examplesLists) {
-					String liTitTemp = exampleList.select("span.collinsOrder").first().text();//就是那个”例“字
-					s.append(liTitTemp);
-					Elements liExampleBoxTemp = exampleList.select("div.examples").first().children();//英文和翻译
-					String lebt1 = liExampleBoxTemp.get(0).text();
-					s.append(lebt1 + "\r\n");
-					String lebt2 = liExampleBoxTemp.get(1).text();
-					s.append("    " + lebt2 + "\r\n");
-				}				
+					s.append("    ~");
+					appendCtn(s, exampleList.select("span.collinsOrder"));
+					s.append(exampleList.select("div.examples").get(0).child(0).text());
+					s.append("\r\n         ");
+					s.append(exampleList.select("div.examples").get(0).child(1).text());
+					s.append("\r\n");
+				}
 			}
+			s.append("------------------------------------------------------\r\n");
 		}
-
-		s.append(headEle.select("span.title").html());
 		return new String(s);
+	}
+
+	/**
+	 * 添加了非空判断的功能
+	 * @param s 要给谁后面追加字符串？
+	 * @param string 追加的字符串是？
+	 */
+	private boolean appendCtn(StringBuilder s, String string) {
+		if (string != null && !string.equals("")) {
+			s.append(string);
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * 添加了非空判断的功能
+	 * @param s 要给谁后面追加字符串？
+	 * @param string 要从哪个元素中提取字符串？
+	 */
+	private boolean appendCtn(StringBuilder s, Elements eles) {
+		if (eles != null) {
+			String firstText = eles.first().text();
+			s.append(firstText);
+			return true;
+		}
+		return false;
 	}
 
 	/**
