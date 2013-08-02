@@ -1,6 +1,6 @@
 描述：网页词典内容截取器  
   
-用法：FetchWord -m <outputType> -w <word>|-s <file> -d <dir>|-f <file> -t <outputStyle>  
+用法：FetchWord [-m <outputType>][ -iw <word>|-is <file>][ -d <dir>|-of <file>][ -s <outputStyle> ][ -c <dictionary>][ -p <pronounceLocal>][ -e <executableMp3PlayerLocation>][ | -h]
   
   -iw     指定单词  
   -is     指定单词列表文件，程序扫描该文件读取所有单词并抓取其释义  

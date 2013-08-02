@@ -184,53 +184,83 @@ public class FetchWord {
 	}
 
 	private static void printHelpAndExit() {
-		System.out
-				.println("描述：网页词典内容截取器\r\n"
-						+ "\r\n"
-						+ "用法：FetchWord -m <outputType> -w <word>|-s <file> -d <dir>|-f <file>\r\n"
-						+ "\r\n"
-						+ "  -iw     指定单词\r\n"
-						+ "  -is     指定单词列表文件，程序扫描该文件读取所有单词并抓取其释义\r\n"
-						+ "  -od     指定一个文件夹存放抓取结果\r\n"
-						+ "  -of     指定一个文件存放抓取结果\r\n"
-						+ "  -m      指定输出类型\r\n"
-						+ "           默认是\r\n"
-						+ "            print\r\n"
-						+ "           可能的值有\r\n"
-						+ "            print    将结果打印在屏幕上\r\n"
-						+ "            folder   将结果存入指定的文件夹中\r\n"
-						+ "                      参数列表中必须包含-d选项并指明存储的位置\r\n"
-						+ "            file     将结果存入单个文件中\r\n"
-						+ "                      参数列表中必须包含-f选项并指明存储文件的位置\r\n"
-						+ "           通常情况下，不指定输出位置，程序将直接打印，否则输出结果到指定位置\r\n"
-						+ "            只要输出类型不特殊注明为其它输出方式：\r\n"
-						+ "             如果使用-of指定了输出文件，则输出结果到单独的文件\r\n"
-						+ "             如果使用-od指定了输出文件夹，则输出结果到指定的文件夹\r\n"
-						+ "  -h      显示本帮助\r\n"
-						+ "  \r\n"
-						+ "用法示例：\r\n"
-						+ "\r\n"
-						+ "1.查看帮助\r\n"
-						+ "java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -h\r\n"
-						+ "\r\n"
-						+ "2.获取 hello 的释义并将结果打印出来\r\n"
-						+ "java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -iw hello -m print\r\n"
-						+ "\r\n"
-						+ "3.获取 hello 的释义并将结果存入 \"/home/mindfine/dict/\" 文件夹中\r\n"
-						+ "java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -iw hello -od /home/mindfine/dict/\r\n"
-						+ "\r\n"
-						+ "4.获取 hello 的释义并将结果存入 \"/home/mindfine/dict.txt\" 文件中\r\n"
-						+ "java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -iw hello -of /home/mindfine/dict.txt\r\n"
-						+ "\r\n"
-						+ "5.解析 \"/home/mindfine/words.txt\" 中的所有单词，并将释义存入 \"/home/mindfine/dict/\" 文件夹中\r\n"
-						+ "java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -is /home/mindfine/words.txt -od /home/mindfine/dict/\r\n"
-						+ "\r\n"
-						+ "6.解析 \"/home/mindfine/words.txt\" 中的所有单词，并将释义写入 \"/home/mindfine/dict.txt\" 文件中\r\n"
-						+ "java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -is /home/mindfine/words.txt -of /home/mindfine/dict.txt\r\n"
-						+ "\r\n" + "\r\n" + "源单词文件的格式为：\r\n" + "hello\r\n"
-						+ "many\r\n" + "tiny\r\n" + "funny\r\n" + "...\r\n"
-						+ "\r\n" + "请在项目主页报告程序的错误，欢迎任何形式的复制和转发\r\n"
-						+ "项目主页：https://github.com/rankun203/YoudaoDict");
+		System.out.println("描述：网页词典内容截取器\r\n" +
+"\r\n" +  
+"用法：FetchWord [-m <outputType>][ -iw <word>|-is <file>][ -d <dir>|-of <file>][ -s <outputStyle> ][ -c <dictionary>][ -p <pronounceLocal>][ -e <executableMp3PlayerLocation>][ | -h]\r\n" +
+"  \r\n" +
+"  -iw     指定单词  \r\n" +
+"  -is     指定单词列表文件，程序扫描该文件读取所有单词并抓取其释义  \r\n" +
+"  -od     指定一个文件夹存放抓取结果  \r\n" +
+"  -of     指定一个文件存放抓取结果  \r\n" +
+"  -m      指定输出类型  \r\n" +
+"           默认是  \r\n" +
+"            print  \r\n" +
+"           可能的值有  \r\n" +
+"            print    将结果打印在屏幕上  \r\n" +
+"            folder   将结果存入指定的文件夹中  \r\n" +
+"                      参数列表中必须包含-d选项并指明存储的位置  \r\n" +
+"            file     将结果存入单个文件中  \r\n" +
+"                      参数列表中必须包含-f选项并指明存储文件的位置  \r\n" +
+"           通常情况下，不指定输出位置，程序将直接打印，否则输出结果到指定位置  \r\n" +
+"            只要输出类型不特殊注明为其它输出方式：  \r\n" +
+"             如果使用-of指定了输出文件，则输出结果到单独的文件  \r\n" +
+"             如果使用-od指定了输出文件夹，则输出结果到指定的文件夹  \r\n" +
+"  -c      指定词典  \r\n" +
+"           默认值是  \r\n" +
+"            youdaocollins  \r\n" +
+"           可能的值有  \r\n" +
+"            youdaocollins   从有道词典网站获取Collins词典的释义  \r\n" +
+"  -s      指定输出内容的格式  \r\n" +
+"           默认是  \r\n" +
+"            plain  \r\n" +
+"           可能的值有  \r\n" +
+"            plain           纯文本方式显示内容  \r\n" +
+"            singleStyle     将样式直接写入HTML中  \r\n" +
+"			separateStyle   将样式分布在HTML页面之外的css文件中  \r\n" +
+"  -p      读出单词的读音，如果未发声，说明没有相应的声音文件  \r\n" +
+"           默认值为  \r\n" +
+"            en  \r\n" +
+"           可能的值有  \r\n" +
+"            en              使用英国口音读出单词  \r\n" +
+"            us              使用美国口音读出单词  \r\n" +
+"            no              不要读出单词  \r\n" +
+"  -e      设置可执行发声工具的路径，系统将调用该工具读出单词  \r\n" +
+"           默认使用/usr/bin/mpg321  \r\n" +
+"           可能的值有  \r\n" +
+"            mpg321  \r\n" +
+"  \r\n" +
+"  -h      显示本帮助  \r\n" +
+"  \r\n" +
+"用法示例：  \r\n" +
+"  \r\n" +
+"1.查看帮助  \r\n" +
+"java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -h  \r\n" +
+"  \r\n" +
+"2.获取 hello 的释义并将结果打印出来  \r\n" +
+"java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -iw hello -m print  \r\n" +
+"  \r\n" +
+"3.获取 hello 的释义并将结果存入 \"/home/mindfine/dict/\" 文件夹中  \r\n" +
+"java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -iw hello -od /home/mindfine/dict/  \r\n" +
+"  \r\n" +
+"4.获取 hello 的释义并将结果存入 \"/home/mindfine/dict.txt\" 文件中  \r\n" +
+"java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -iw hello -of /home/mindfine/dict.txt  \r\n" +
+"  \r\n" +
+"5.解析 \"/home/mindfine/words.txt\" 中的所有单词，并将释义存入 \"/home/mindfine/dict/\" 文件夹中  \r\n" +
+"java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -is /home/mindfine/words.txt -od /home/mindfine/dict/  \r\n" +
+"  \r\n" +
+"6.解析 \"/home/mindfine/words.txt\" 中的所有单词，并将释义写入 \"/home/mindfine/dict.txt\" 文件中  \r\n" +
+"java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -is /home/mindfine/words.txt -of /home/mindfine/dict.txt  \r\n" +
+"  \r\n" +
+"  \r\n" +
+"源单词文件的格式为：  \r\n" +
+"hello  \r\n" +
+"many  \r\n" +
+"tiny  \r\n" +
+"funny  \r\n" +
+"...  \r\n" +
+"  \r\n" +
+"请在项目主页报告程序的错误，欢迎任何形式的复制和转发  \r\n" +
+"项目主页：https://github.com/rankun203/YoudaoDict");
 		System.exit(0);
 	}
 
