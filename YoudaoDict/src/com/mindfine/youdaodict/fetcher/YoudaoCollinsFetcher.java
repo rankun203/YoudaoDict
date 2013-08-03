@@ -70,6 +70,9 @@ public class YoudaoCollinsFetcher implements Fetcher {
 		s.append("----------http://dict.youdao.com----------\r\n\r\n");
 		try {
 			Element collinsResult = doc.getElementById("collinsResult");
+			if(collinsResult == null) {
+				return "单词\"" + word + "\"在Collins英汉词典中没有找到相关解释，请选择其他词典 :)";
+			}
 			Elements transContainers = collinsResult.select("div.trans-container");
 			for(Element transContainer : transContainers) {//如果有多个transContainer
 				//找transContainer下的所有transContent
@@ -139,7 +142,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 						if (additionalPtn.size() > 1) {
 							s.append(additionalPtn.get(1).text().trim() + " ");
 						}
-						
+
 						//collins-intro部分
 						Element collinsIntro = wtContainer.select("p.collins-intro").first();
 						if (collinsIntro != null) {
@@ -198,7 +201,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 	
 			
 		} catch (NullPointerException ne) {
-			System.out.println("解析未能完全成功，解析器可能已经失效。请重写解析器。");
+			System.out.println("解析未能完全成功，请检查" + getClass().getName() + "\r\n或将此Bug报告给https://github.com/rankun203/YoudaoDict/issues");
 		}
 		return new String(s);
 	}
