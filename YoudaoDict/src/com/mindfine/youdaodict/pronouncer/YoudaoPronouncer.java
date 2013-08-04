@@ -21,6 +21,15 @@ public class YoudaoPronouncer implements Pronouncer {
 		}
 	}
 
+	public void download(String word, String saveTo){
+		String url0 = queryURL + "?type=1&audio=" + word;
+		String url1 = queryURL + "?type=2&audio=" + word;
+		
+		NetTool tool = new NetTool();
+		tool.download(url0, saveTo + "en/", word + ".mp3");
+		tool.download(url1, saveTo + "us/", word + ".mp3");
+	}
+	
 	private void playByLocal(String url) {
 		try {
 			Process p = Runtime.getRuntime().exec("mpg321 " + url);

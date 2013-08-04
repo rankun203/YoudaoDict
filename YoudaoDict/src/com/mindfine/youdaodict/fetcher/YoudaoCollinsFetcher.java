@@ -22,6 +22,7 @@ import org.jsoup.select.Elements;
 public class YoudaoCollinsFetcher implements Fetcher {
 	public String fetchFromURL = "http://dict.youdao.com/search";
 	public Fetcher.StyleType styleType;
+	public boolean log = true;
 
 	@Override
 	public String getResFromWord(String word) {
@@ -67,7 +68,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 	private String getPlainExplain(Document doc, String word) {
 		StringBuilder s = new StringBuilder();
 		LinkedList<String> titList = new LinkedList<String>();//存储大标题的链表
-		s.append("----------http://dict.youdao.com----------\r\n\r\n");
+		s.append("----------http://dict.youdao.com----------\r\n");
 		try {
 			Element collinsResult = doc.getElementById("collinsResult");
 			if(collinsResult == null) {
@@ -100,6 +101,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 
 						//下面是标题，h4栏
 						Element h4Tit = wtContainer.select("h4").first();
+						s.append("\r\n");
 						appendCtn(s, h4Tit.select("span.title"));
 						s.append(" ");
 						appendCtn(s, h4Tit.select("em.phonetic"));
