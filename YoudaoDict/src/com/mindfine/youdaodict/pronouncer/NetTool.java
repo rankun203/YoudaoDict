@@ -1,5 +1,6 @@
 package com.mindfine.youdaodict.pronouncer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -8,8 +9,10 @@ import java.net.URL;
 
 public class NetTool {
 	public void download(String downFromUrl, String saveTo, String fileName) {
+		prepare(saveTo, fileName);
 		int nStartPos = 0;
 		int nRead = 0;
+		RandomAccessFile oSavedFile = null;
 		try {
 			URL url = new URL(downFromUrl);
 			// 打开连接
@@ -17,7 +20,7 @@ public class NetTool {
 					.openConnection();
 			// 获得文件长度
 			long nEndPos = getFileSize(downFromUrl);
-			RandomAccessFile oSavedFile = new RandomAccessFile(saveTo + fileName, "rw");
+			oSavedFile = new RandomAccessFile(saveTo + fileName, "rw");
 			httpConnection
 					.setRequestProperty("User-Agent", "Internet Explorer");
 			String sProperty = "bytes=" + nStartPos + "-";
@@ -33,6 +36,34 @@ public class NetTool {
 			httpConnection.disconnect();
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			if(oSavedFile != null) {
+				try {
+					oSavedFile.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private void prepare(String saveTo, String fileName) {
+		File saveToFile = new File(saveTo);
+		File fileNameFile = new File(saveTo + fileName);
+		if(!saveToFile.exists()) {
+			if(!saveToFile.mkdirs()) {
+				System.err.println("创建文件夹失败！");
+			}
+		}
+		if(!fileNameFile.exists()) {
+			try {
+				if(!fileNameFile.createNewFile()) {
+					System.out.println("未知原因，创建文件失败！");
+				}
+			} catch (IOException e) {
+				System.out.println("操作发生异常，创建文件失败！");
+				e.printStackTrace();
+			}
 		}
 	}
 
