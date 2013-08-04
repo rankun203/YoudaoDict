@@ -161,7 +161,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 								
 								Elements collinsMajorTrans = meanItem.select("div.collinsMajorTrans");
 								if(collinsMajorTrans.size() > 0) {
-									String meanNo = collinsMajorTrans.first().select("span.collinsOrder").first().text();
+									String meanNo = collinsMajorTrans.first().select("span.collinsOrder").first().text(); 
 									appendCtn(s, meanNo);
 								}
 
@@ -187,7 +187,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 									s.append(exampleList.select("div.examples").get(0).child(1).text());
 									s.append("\r\n");
 								}
-								if(examplesLists.size() > 0) {
+								if(collinsMajorTrans.size() > 0) {
 									s.append("------------------------------------------------------\r\n");
 								}
 							}
