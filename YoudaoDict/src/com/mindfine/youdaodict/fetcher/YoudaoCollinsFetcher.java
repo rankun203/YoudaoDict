@@ -54,7 +54,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 			System.err.println("open connection failed.\r\nNetwork may not accessible.");
 			e.printStackTrace();
 		} catch (NullPointerException e) {
-			return "未找到相关单词，请检查拼写。";
+			return null;
 		}
 		return rtn;
 	}
