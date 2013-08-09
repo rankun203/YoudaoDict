@@ -173,8 +173,11 @@ public class FetchWord {
 				fetcher = new YoudaoCollinsFetcher();
 				fetcher.setStyleType(styleType);
 				String rtnStr = fetcher.getResFromWord(word2);
-				
-				System.out.println(rtnStr);
+				if(rtnStr == null) {
+					System.out.println("你所查询的单词暂未收录。");
+				} else {
+					System.out.println(rtnStr);
+				}
 				pronouncer = new YoudaoPronouncer();
 				pronouncer.pronounce(word2);
 			}

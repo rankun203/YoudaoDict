@@ -72,7 +72,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 		try {
 			Element collinsResult = doc.getElementById("collinsResult");
 			if(collinsResult == null) {
-				return "单词\"" + word + "\"在Collins英汉词典中没有找到相关解释，请选择其他词典 :)";
+				return null;
 			}
 			Elements transContainers = collinsResult.select("div.trans-container");
 			for(Element transContainer : transContainers) {//如果有多个transContainer
