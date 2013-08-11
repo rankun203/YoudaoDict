@@ -2,7 +2,9 @@ package com.mindfine.youdaodict;
 
 import com.mindfine.youdaodict.fetcher.Fetcher;
 import com.mindfine.youdaodict.fetcher.YoudaoCollinsFetcher;
+import com.mindfine.youdaodict.fetcher.YoudaoCollinsOfflineFetcher;
 import com.mindfine.youdaodict.pronouncer.Pronouncer;
+import com.mindfine.youdaodict.pronouncer.YoudaoOfflinePronouncer;
 import com.mindfine.youdaodict.pronouncer.YoudaoPronouncer;
 
 /**
@@ -23,6 +25,7 @@ public class FetchWord {
 	private static String wantStyle = "";
 	private static Fetcher.StyleType styleType;
 	private static String method = "";
+	private static boolean offline = false;
 	private static Fetcher fetcher;
 	private static Pronouncer pronouncer;
 
@@ -59,6 +62,8 @@ public class FetchWord {
 					wantStyle = args[i + 1];
 				} else if (arg.equals("-h")) {
 					printHelpAndExit();
+				} else if (arg.equals("-io")) {
+					offline = true;
 				}
 			}
 		}
@@ -170,16 +175,28 @@ public class FetchWord {
 	private static void fetchAndPrint(String word2) {
 		if (dicType != Fetcher.DicType.UNKNOWN) {
 			if (dicType == Fetcher.DicType.youdaoCollins) {
-				fetcher = new YoudaoCollinsFetcher();
-				fetcher.setStyleType(styleType);
-				String rtnStr = fetcher.getResFromWord(word2);
-				if(rtnStr == null) {
-					System.out.println("你所查询的单词暂未收录。");
+				if(offline == true) {
+					fetcher = new YoudaoCollinsOfflineFetcher();
+					String rtnStr = fetcher.getResFromWord(word2);
+					if(rtnStr == null) {
+						System.out.println("你所查询的单词暂未收录。");
+					} else {
+						System.out.println(rtnStr);
+					}
+					pronouncer = new YoudaoOfflinePronouncer();
+					pronouncer.pronounce(word2);
 				} else {
-					System.out.println(rtnStr);
+					fetcher = new YoudaoCollinsFetcher();
+					fetcher.setStyleType(styleType);
+					String rtnStr = fetcher.getResFromWord(word2);
+					if(rtnStr == null) {
+						System.out.println("你所查询的单词暂未收录。");
+					} else {
+						System.out.println(rtnStr);
+					}
+					pronouncer = new YoudaoPronouncer();
+					pronouncer.pronounce(word2);
 				}
-				pronouncer = new YoudaoPronouncer();
-				pronouncer.pronounce(word2);
 			}
 		} else {
 			System.out.println("抱歉，系统暂不支持该词典");
@@ -193,6 +210,7 @@ public class FetchWord {
 "  \r\n" +
 "  -iw     指定单词  \r\n" +
 "  -is     指定单词列表文件，程序扫描该文件读取所有单词并抓取其释义  \r\n" +
+"  -io     标记为离线查词，需要相关词库及读音文件，此选项不跟任何参数  \r\n" +
 "  -od     指定一个文件夹存放抓取结果  \r\n" +
 "  -of     指定一个文件存放抓取结果  \r\n" +
 "  -m      指定输出类型  \r\n" +

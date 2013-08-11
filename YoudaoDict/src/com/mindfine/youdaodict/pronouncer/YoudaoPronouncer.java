@@ -5,8 +5,6 @@ import java.io.IOException;
 public class YoudaoPronouncer implements Pronouncer {
 	
 	private String queryURL = "http://dict.youdao.com/dictvoice";
-	public int PRONOUNCE_EN = 1;
-	public int PRONOUNCE_US = 2;
 	private String exe = "mpg321";
 	
 	@Override
@@ -33,11 +31,9 @@ public class YoudaoPronouncer implements Pronouncer {
 	private void playByLocal(String url) {
 		try {
 			Process p = Runtime.getRuntime().exec("mpg321 " + url);
-			p.waitFor();
+//			p.waitFor();
 		} catch (IOException e) {
 			System.out.println("朗读单词失败.");
-			e.printStackTrace();
-		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}

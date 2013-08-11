@@ -1,6 +1,8 @@
 package com.mindfine.youdaodict.pronouncer;
 
 public interface Pronouncer {
+	public int PRONOUNCE_EN = 1;
+	public int PRONOUNCE_US = 2;
 	
 	/**
 	 * 读出单词
