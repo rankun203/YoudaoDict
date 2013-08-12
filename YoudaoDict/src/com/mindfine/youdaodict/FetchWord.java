@@ -36,10 +36,13 @@ public class FetchWord {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		Timer t = new Timer();
+
 		if (args[0] != null && !args[0].equals("") && !args[0].startsWith("-")) {
 			styleType = Fetcher.StyleType.plain;
 			dicType = Fetcher.DicType.youdaoCollins;
 			fetchAndPrint(args[0]);
+			System.out.println("共计耗时：" + t.stop() + "ms");
 			System.exit(0);
 		}
 
@@ -105,6 +108,7 @@ public class FetchWord {
 			System.err.println("不知道你要查什么单词，请用-iw指定单词或用-is指定包含单词列表的文件");
 			System.exit(0);
 		}
+		System.out.println("共计耗时：" + t.stop() + "ms");
 	}
 
 	/**

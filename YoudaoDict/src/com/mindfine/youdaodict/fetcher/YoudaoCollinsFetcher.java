@@ -226,7 +226,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 	 * @param string 要从哪个元素中提取字符串？
 	 */
 	private boolean appendCtn(StringBuilder s, Elements eles) {
-		if (eles != null) {
+		if (eles != null && eles.first() != null) {
 			String firstText = eles.first().text();
 			s.append(firstText);
 			return true;
