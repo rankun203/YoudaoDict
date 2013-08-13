@@ -50,9 +50,11 @@ public class YoudaoCollinsFetcher implements Fetcher {
 		} catch (MalformedURLException e) {
 			System.err.println("ERROR, queryUrl is invalid.");
 			e.printStackTrace();
+			return null;
 		} catch (IOException e) {
 			System.err.println("open connection failed.\r\nNetwork may not accessible.");
 			e.printStackTrace();
+			return null;
 		} catch (NullPointerException e) {
 			return null;
 		}
