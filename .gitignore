@@ -2,3 +2,5 @@
 *.mp3
 *.exp
 *.idx
+
+dist/

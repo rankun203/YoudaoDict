@@ -25,6 +25,7 @@ public class YoudaoOfflinePronouncer implements Pronouncer {
 	private void playByLocal(String uri) {
 		try {
 			Process p = Runtime.getRuntime().exec("mpg321 " + uri);
+//			p.waitFor();
 		} catch (IOException e) {
 			System.out.println("朗读单词失败.");
 			e.printStackTrace();
