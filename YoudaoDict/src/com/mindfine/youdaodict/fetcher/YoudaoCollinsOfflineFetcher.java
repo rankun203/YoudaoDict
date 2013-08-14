@@ -39,6 +39,7 @@ public class YoudaoCollinsOfflineFetcher implements Fetcher{
 		FileReader fr = null;
 		BufferedReader br = null;
 		try {
+			long startt = System.currentTimeMillis();
 			fr = new FileReader(System.getProperty("user.dir") + "/youdaocollins.idx");
 			br = new BufferedReader(fr);
 			String bufTpr = null;//缓存着每一条索引
@@ -52,6 +53,7 @@ public class YoudaoCollinsOfflineFetcher implements Fetcher{
 					idxMap.put(wordName, new Indexer(wordName, type, bytePos, byteCount));
 				}
 			}
+			System.err.println(System.currentTimeMillis() - startt);
 		} catch (FileNotFoundException e) {
 			System.err.println("词典索引未找到");
 			e.printStackTrace();
@@ -72,8 +74,7 @@ public class YoudaoCollinsOfflineFetcher implements Fetcher{
 		//从map中获取单词索引，调用getLinesFrom方法获取单词解释
 		Indexer indexer = idxMap.get(word);
 		if(indexer != null) {
-System.err.println(indexer.bytePos + ":" + indexer.byteCount);
-			String explainStr = getExplainFrom2(indexer.bytePos, indexer.byteCount);
+			String explainStr = getExplainByBytes(indexer.bytePos, indexer.byteCount);
 			return explainStr;
 		} else {
 			return null;
@@ -112,19 +113,16 @@ System.err.println(indexer.bytePos + ":" + indexer.byteCount);
 		}
 		return explain.toString();
 	}
-	public String getExplainFrom2(long skip, int length){
+	public String getExplainByBytes(long skip, int length){
 		RandomAccessFile raf = null;
 		String explain = null;
 		try {
-			long startt = System.currentTimeMillis();
 			raf = new RandomAccessFile(System.getProperty("user.dir") + "/youdaocollins.exp", "r");
 			raf.skipBytes((int) skip);
 			byte[] temp = new byte[length];
 			raf.read(temp);
 
-			long endt = System.currentTimeMillis();
 			explain = new String(temp);
-			System.out.println("expend mills = " + (endt - startt));
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
