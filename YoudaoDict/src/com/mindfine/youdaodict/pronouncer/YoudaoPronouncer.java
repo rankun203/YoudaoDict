@@ -6,14 +6,23 @@ public class YoudaoPronouncer implements Pronouncer {
 	
 	private String queryURL = "http://dict.youdao.com/dictvoice";
 	private String exe = "mpg321";
+	public PronounceType pronounceType = PronounceType.PRONOUNCE_EN;
 	
 	@Override
 	public void pronounce(String word) {
-		pronounce(word, PRONOUNCE_EN);
+		pronounce(word, PronounceType.PRONOUNCE_MUTE);
 	}
-	public void pronounce(String word, int type) {
-		String url = queryURL + "?type=" + type + "&audio=" + word;
-
+	public void pronounce(String word, PronounceType pType) {
+		String dialect = null;
+		if(pType == PronounceType.PRONOUNCE_EN) {
+			dialect = "1";
+		} else if (pType == PronounceType.PRONOUNCE_EN) {
+			dialect = "2";
+		} else if (pType == PronounceType.PRONOUNCE_MUTE) {
+			return;
+		}
+		
+		String url = queryURL + "?type=" + dialect + "&audio=" + word;
 		if(word != null && !word.equals("")) {
 			playByLocal(url);
 		}
@@ -30,7 +39,7 @@ public class YoudaoPronouncer implements Pronouncer {
 	
 	private void playByLocal(String url) {
 		try {
-			Process p = Runtime.getRuntime().exec("mpg321 " + url);
+			Runtime.getRuntime().exec("mpg321 " + url);
 //			p.waitFor();
 		} catch (IOException e) {
 			System.out.println("朗读单词失败.");
@@ -50,6 +59,20 @@ public class YoudaoPronouncer implements Pronouncer {
 		if(args.length > 0) {
 			new YoudaoPronouncer().pronounce(args[0]);			
 		}
+	}
+	@Override
+	public PronounceType getPronounceType() {
+		return pronounceType;
+	}
+	@Override
+	public void setPronounceType(PronounceType pronounceType) {
+		this.pronounceType = pronounceType;
+	}
+	public String getExe() {
+		return exe;
+	}
+	public void setExe(String exe) {
+		this.exe = exe;
 	}
 
 }

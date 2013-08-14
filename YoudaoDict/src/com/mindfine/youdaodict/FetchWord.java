@@ -4,6 +4,7 @@ import com.mindfine.youdaodict.fetcher.Fetcher;
 import com.mindfine.youdaodict.fetcher.YoudaoCollinsFetcher;
 import com.mindfine.youdaodict.fetcher.YoudaoCollinsOfflineFetcher;
 import com.mindfine.youdaodict.pronouncer.Pronouncer;
+import com.mindfine.youdaodict.pronouncer.Pronouncer.PronounceType;
 import com.mindfine.youdaodict.pronouncer.YoudaoOfflinePronouncer;
 import com.mindfine.youdaodict.pronouncer.YoudaoPronouncer;
 
@@ -17,13 +18,16 @@ import com.mindfine.youdaodict.pronouncer.YoudaoPronouncer;
  */
 public class FetchWord {
 	private static String word = "";
-	private static String saveToDir = "";
-	private static String saveToFile = "";
 	private static String srcWordFile = "";
 	private static String wantDic = "youdaocollins";
 	private static Fetcher.DicType dicType;
 	private static String wantStyle = "";
 	private static Fetcher.StyleType styleType;
+	private static String pronounceType;
+	/**
+	 * 发音选项
+	 */
+	private static Pronouncer.PronounceType pType;
 	private static String method = "";
 	private static boolean offline = false;
 	private static Fetcher fetcher;
@@ -39,6 +43,7 @@ public class FetchWord {
 		Timer t = new Timer();
 
 		if (args[0] != null && !args[0].equals("") && !args[0].startsWith("-")) {
+			pType = Pronouncer.PronounceType.PRONOUNCE_EN;
 			styleType = Fetcher.StyleType.plain;
 			dicType = Fetcher.DicType.youdaoCollins;
 			fetchAndPrint(args[0]);
@@ -53,10 +58,8 @@ public class FetchWord {
 					word = args[i + 1];
 				} else if (arg.equals("-is")) {
 					srcWordFile = args[i + 1];
-				} else if (arg.equals("-od")) {
-					saveToDir = args[i + 1];
-				} else if (arg.equals("-of")) {
-					saveToFile = args[i + 1];
+				} else if (arg.equals("-io")) {
+					offline = true;
 				} else if (arg.equals("-m")) {
 					method = args[i + 1];
 				} else if (arg.equals("-c")) {
@@ -65,14 +68,15 @@ public class FetchWord {
 					wantStyle = args[i + 1];
 				} else if (arg.equals("-h")) {
 					printHelpAndExit();
-				} else if (arg.equals("-io")) {
-					offline = true;
+				} else if (arg.equals("-p")) {
+					pronounceType = args[i + 1];
 				}
 			}
 		}
 
 		resolveDicType();
 		resolveStyleType();
+		resolvePronounceType();
 
 		if (word != null && !word.equals("")) {
 			if (method != null && !method.equals("")) {
@@ -109,6 +113,20 @@ public class FetchWord {
 			System.exit(0);
 		}
 		System.out.println("共计耗时：" + t.stop() + "ms");
+	}
+
+	private static void resolvePronounceType() {
+		if(pronounceType != null && !pronounceType.equals("")) {
+			if (pronounceType.equals("en")) {
+				pType = PronounceType.PRONOUNCE_EN;
+			} else if (pronounceType.equals("us")) {
+				pType = PronounceType.PRONOUNCE_US;
+			} else if (pronounceType.equals("no")) {
+				pType = PronounceType.PRONOUNCE_MUTE;
+			} else {
+				pType = PronounceType.PRONOUNCE_MUTE;
+			}
+		}
 	}
 
 	/**
@@ -188,7 +206,7 @@ public class FetchWord {
 						System.out.println(rtnStr);
 					}
 					pronouncer = new YoudaoOfflinePronouncer();
-					pronouncer.pronounce(word2);
+					pronouncer.pronounce(word2, pType);
 				} else {
 					fetcher = new YoudaoCollinsFetcher();
 					fetcher.setStyleType(styleType);
@@ -198,8 +216,9 @@ public class FetchWord {
 					} else {
 						System.out.println(rtnStr);
 					}
+					
 					pronouncer = new YoudaoPronouncer();
-					pronouncer.pronounce(word2);
+					pronouncer.pronounce(word2, pType);
 				}
 			}
 		} else {
@@ -289,11 +308,4 @@ public class FetchWord {
 		System.exit(0);
 	}
 
-	public Fetcher getFetcher() {
-		return fetcher;
-	}
-
-	public void setFetcher(Fetcher fetcher) {
-		this.fetcher = fetcher;
-	}
 }

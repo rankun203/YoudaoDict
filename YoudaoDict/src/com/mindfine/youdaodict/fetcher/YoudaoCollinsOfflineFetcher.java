@@ -39,7 +39,6 @@ public class YoudaoCollinsOfflineFetcher implements Fetcher{
 		FileReader fr = null;
 		BufferedReader br = null;
 		try {
-			long startt = System.currentTimeMillis();
 			fr = new FileReader(System.getProperty("user.dir") + "/youdaocollins.idx");
 			br = new BufferedReader(fr);
 			String bufTpr = null;//缓存着每一条索引
@@ -53,7 +52,6 @@ public class YoudaoCollinsOfflineFetcher implements Fetcher{
 					idxMap.put(wordName, new Indexer(wordName, type, bytePos, byteCount));
 				}
 			}
-			System.err.println(System.currentTimeMillis() - startt);
 		} catch (FileNotFoundException e) {
 			System.err.println("词典索引未找到");
 			e.printStackTrace();
