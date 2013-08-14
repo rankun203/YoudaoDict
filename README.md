@@ -1,6 +1,7 @@
 描述：网页词典内容截取器  
   
 性能指标：本机测试离线查询单词200ms之内
+  
 用法：FetchWord [-m <outputType>][ -iw <word>|-is <file>][ -d <dir>|-of <file>][ -s <outputStyle> ][ -c <dictionary>][ -p <pronounceLocal>][ -e <executableMp3PlayerLocation>][ | -h]
   
   -iw     指定单词  
