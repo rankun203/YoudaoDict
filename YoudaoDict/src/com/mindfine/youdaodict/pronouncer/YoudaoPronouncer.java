@@ -57,7 +57,16 @@ public class YoudaoPronouncer implements Pronouncer {
 	
 	public static void main(String[] args) {
 		if(args.length > 0) {
-			new YoudaoPronouncer().pronounce(args[0]);			
+			String args0 = args[0];
+			if(args0 != null && !args0.equals("")) {
+				if(args0.contains("-en")) {
+					args0 = args0.replace("-en", "");
+					new YoudaoPronouncer().pronounce(args0, PronounceType.PRONOUNCE_EN);
+				} else if(args0.contains("-us")) {
+					args0 = args0.replace("-us", "");
+					new YoudaoPronouncer().pronounce(args0, PronounceType.PRONOUNCE_US);
+				}
+			}
 		}
 	}
 	@Override
