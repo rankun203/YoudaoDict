@@ -39,10 +39,12 @@ public class YoudaoPronouncer implements Pronouncer {
 	
 	private void playByLocal(String url) {
 		try {
-			Runtime.getRuntime().exec("mpg321 " + url);
-//			p.waitFor();
+			Process p = Runtime.getRuntime().exec("mpg321 " + url);
+			p.waitFor();
 		} catch (IOException e) {
 			System.out.println("朗读单词失败.");
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}

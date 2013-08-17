@@ -98,7 +98,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 					Elements wtContainers = transContent.select("div.wt-container");
 					for(Element wtContainer : wtContainers) {
 						if(titList.size() > 0) {//如果还有什么大标题小标题的话，取出一个来
-							s.append("* " + titList.pop() + "\r\n----------------------------------------------\r\n");
+							s.append("\r\n* " + titList.pop() + "\r\n----------------------------------------------");
 						}
 
 						//下面是标题，h4栏
