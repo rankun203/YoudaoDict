@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +15,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import com.mindfine.youdaodict.explain.YoudaoCollinsExplain;
+import com.mindfine.youdaodict.explain.YoudaoCollinsExplain.ExplainUnit;
+import com.mindfine.youdaodict.explain.YoudaoCollinsExplain.ExplainUnit.ExplainUnitItem;
+import com.mindfine.youdaodict.explain.YoudaoCollinsExplain.ExplainUnit.ExplainUnitItem.ItemExampleUnit;
 
 /**
  * 从有道词典截取Collins的释义
@@ -22,8 +29,15 @@ import org.jsoup.select.Elements;
 public class YoudaoCollinsFetcher implements Fetcher {
 	public String fetchFromURL = "http://dict.youdao.com/search";
 	public Fetcher.StyleType styleType;
-	public boolean log = true;
+	public boolean debug = true;
+	public YoudaoCollinsExplain exp;
 
+	/**
+	 * 初始化一个词典释义对象，用来填充释义
+	 */
+	public YoudaoCollinsFetcher () {
+		exp = new YoudaoCollinsExplain();
+	}
 	@Override
 	public String getResFromWord(String word) {
 		return jsoupFetcher(word);
@@ -41,7 +55,12 @@ public class YoudaoCollinsFetcher implements Fetcher {
 			Document doc = Jsoup.parse(qu, 16000);
 			if (styleType == StyleType.plain) {
 				if(doc != null) {
-					rtn = getPlainExplain(doc, word);
+					queryPlainExplain(doc, word);
+					if(getExp().getUsageList().size() > 0) {
+						rtn = getExp().toString();
+					} else {
+						rtn = null;
+					}
 				}
 			} else {
 				Element collinsRes = doc.getElementById("collinsResult");
@@ -58,6 +77,12 @@ public class YoudaoCollinsFetcher implements Fetcher {
 		} catch (NullPointerException e) {
 			return null;
 		}
+
+		List<String> tmpList = getExp().toSplitedString();
+		for(String tmp : tmpList) {
+			System.err.println(tmp);
+		}
+
 		return rtn;
 	}
 
@@ -67,136 +92,161 @@ public class YoudaoCollinsFetcher implements Fetcher {
 	 * @param word 单词
 	 * @return 查到的字符串
 	 */
-	private String getPlainExplain(Document doc, String word) {
-		StringBuilder s = new StringBuilder();
+	private boolean queryPlainExplain(Document doc, String word) {
+		exp.setWord(word);
+		
 		LinkedList<String> titList = new LinkedList<String>();//存储大标题的链表
-		s.append("----------http://dict.youdao.com----------\r\n");
 		try {
 			Element collinsResult = doc.getElementById("collinsResult");
 			if(collinsResult == null) {
-				return null;
+				return false;
 			}
 			Elements transContainers = collinsResult.select("div.trans-container");
-			for(Element transContainer : transContainers) {//如果有多个transContainer
-				//找transContainer下的所有transContent
-				Elements transContents = transContainer.select("div.trans-content");
-				for(Element transContent : transContents) {//如果有多个transContent
-					//找transContent下的所有标题prContainers
-					Elements prContainers = transContent.select("div.pr-container");
-					for(Element prContainer : prContainers) {//如果有多个包含大分类的框框每个框框有一系列大分类
-						//找出这个框框下的所有大标题
-						Elements wordGroups = prContainer.select("p.wordGroup");
-						for(Element wordGroup : wordGroups) {
-							//拿出这个大标题的序号
-							Elements contentTitles = (wordGroup.select("a.nav-js"));
-							if(contentTitles != null && contentTitles.size() > 0) {
-								titList.add(contentTitles.first().text());
+			for(int i = 0; i < transContainers.size(); i++) {
+				Element transContainer = transContainers.get(i);
+				if(transContainer != null) {
+					//如果有多个transContainer
+					//找transContainer下的所有transContent
+					Elements transContents = transContainer.select("div.trans-content");
+					for(int j = 0; j < transContents.size(); j++) {
+						Element transContent = transContents.get(i);
+						if(transContent != null) {
+							//如果有多个transContent
+							//找transContent下的所有标题prContainers
+							Elements prContainers = transContent.select("div.pr-container");
+							for(int k = 0; k < prContainers.size(); k++) {
+								Element prContainer = prContainers.get(i);
+								if(prContainer != null) {
+									
+								}
 							}
-						}
-					}
-					//找出transContent下所有wtContainer
-					Elements wtContainers = transContent.select("div.wt-container");
-					for(Element wtContainer : wtContainers) {
-						if(titList.size() > 0) {//如果还有什么大标题小标题的话，取出一个来
-							s.append("\r\n* " + titList.pop() + "\r\n----------------------------------------------");
-						}
-
-						//下面是标题，h4栏
-						Element h4Tit = wtContainer.select("h4").first();
-						s.append("\r\n");
-						appendCtn(s, h4Tit.select("span.title"));
-						s.append(" ");
-						appendCtn(s, h4Tit.select("em.phonetic"));
-						//几星词汇
-						String star = h4Tit.select("span.star").attr("class");
-						int starNo = 0;
-						if (star != null) {
-							if (star.indexOf("1") != -1)
-								starNo = 1;
-							else if (star.indexOf("2") != -1)
-								starNo = 2;
-							else if (star.indexOf("3") != -1)
-								starNo = 3;
-							else if (star.indexOf("4") != -1)
-								starNo = 4;
-							else if (star.indexOf("5") != -1)
-								starNo = 5;
-							if(starNo > 0) {
-								s.append(" [");
-								for (int i = 0; i < starNo; i++) {
-									if (i != (starNo - 1)) {
-										s.append("* ");
-									} else {
-										s.append("*");
+							for(Element prContainer : prContainers) {//如果有多个包含大分类的框框每个框框有一系列大分类
+								//找出这个框框下的所有大标题
+								Elements wordGroups = prContainer.select("p.wordGroup");
+								for(Element wordGroup : wordGroups) {
+									//拿出这个大标题的序号
+									Elements contentTitles = (wordGroup.select("a.nav-js"));
+									if(contentTitles != null && contentTitles.size() > 0) {
+										titList.add(contentTitles.first().text());
 									}
 								}
-								s.append("]");
 							}
-							s.append(" ");
-						}
-						//变形
-						Elements additionalPtn = h4Tit.select("span.additional");
-						if (additionalPtn.size() > 0) {
-							s.append(additionalPtn.get(0).text() + " ");
-						}
-						Elements h4TitRank = h4Tit.select("span.rank");
-						if(h4TitRank.size() > 0) {
-							s.append("|" + h4Tit.select("span.rank").text() + "| ");							
-						}
-						if (additionalPtn.size() > 1) {
-							s.append(additionalPtn.get(1).text().trim() + " ");
-						}
-
-						//collins-intro部分
-						Element collinsIntro = wtContainer.select("p.collins-intro").first();
-						if (collinsIntro != null) {
-							s.append("\r\n");
-							s.append("+---------------------------------\r\n");
-							s.append("|" + collinsIntro.text());
-							s.append("\r\n+---------------------------------\r\n");
-						}
-						
-						s.append("\r\n\r\n意义\r\n------------------------------------------------------\r\n");
-
-						Elements ulOls = wtContainer.select("ul.ol");
-						for(Element ulOl : ulOls) {
-							
-							for (Element meanItem : ulOl.children()) {
+							//找出transContent下所有wtContainer
+							Elements wtContainers = transContent.select("div.wt-container");
+							for(Element wtContainer : wtContainers) {
+								ExplainUnit unit = exp.new ExplainUnit();
 								
-								Elements collinsMajorTrans = meanItem.select("div.collinsMajorTrans");
-								if(collinsMajorTrans.size() > 0) {
-									String meanNo = collinsMajorTrans.first().select("span.collinsOrder").first().text(); 
-									appendCtn(s, meanNo);
+								if(titList.size() > 0) {//如果还有什么大标题小标题的话，取出一个来
+									unit.setUsage(titList.pop());
 								}
 
-								String meanStr = collinsMajorTrans.select("p").text();//解释文字
-								//把句子中的关键词加上括号
-								Pattern p = Pattern.compile(word, Pattern.CASE_INSENSITIVE);
-								Matcher m = p.matcher(meanStr);
-								if (m.find()) {
-									String wordTemp = m.group();
-									s.append(meanStr.replace(wordTemp, "[" + wordTemp + "]"));
-								} else {
-									s.append(meanStr);
+								//第一行，包括单词、音标、星星、等级等
+								Elements h4Tits = wtContainer.select("h4");
+								if(h4Tits != null && h4Tits.size() > 0) {
+									Element h4Tit = wtContainer.select("h4").first();
+									if(h4Tit != null) {
+										//音标
+										Elements elesPhoneTic = h4Tit.select("em.phonetic");
+										if(elesPhoneTic.size() > 0) {
+											unit.setPhonetic(elesPhoneTic.first().text().trim());
+										}
+										//星级
+										Elements elesStar = h4Tit.select("span.star");
+										if(elesStar.size() > 0) {
+											String star = elesStar.attr("class").trim();
+											int starNo = 0;
+											if (star != null) {
+												if (star.indexOf("1") != -1)
+													starNo = 1;
+												else if (star.indexOf("2") != -1)
+													starNo = 2;
+												else if (star.indexOf("3") != -1)
+													starNo = 3;
+												else if (star.indexOf("4") != -1)
+													starNo = 4;
+												else if (star.indexOf("5") != -1)
+													starNo = 5;
+												unit.setStar(starNo);
+											}
+										}
+										//变形之一
+										Elements additionalPtn = h4Tit.select("span.additional");
+										if (additionalPtn.size() > 0) {
+											String formStr = additionalPtn.get(0).text().trim();
+											String [] forms = formStr.split("\\W");
+											List<String> formsList = new ArrayList<String>();
+											for(String form_ : forms) {
+												if(form_ != null && !form_.equals("")){
+													formsList.add(form_);
+												}
+											}
+											unit.setForm(formsList);
+										}
+										//等级，CET4、CET6等等
+										Elements h4TitRank = h4Tit.select("span.rank");
+										if(h4TitRank.size() > 0) {
+											String rankStr = h4TitRank.get(0).text().trim();
+											String [] ranks = rankStr.split("\\W");
+											List<String> ranksList = new ArrayList<String>();
+											for(String rank_ : ranks) {
+												ranksList.add(rank_);
+											}
+											unit.setRank(ranksList);
+										}
+										//或许还有一个变形
+										if (additionalPtn.size() > 1) {
+											String additionalStr = additionalPtn.get(1).text().trim();
+											String [] addis = additionalStr.split("\\W");
+											List<String> additionalsList = new ArrayList<String>();
+											for(String form_ : addis) {
+												additionalsList.add(form_);
+											}
+											unit.setAdditional(additionalsList);
+										}
+										
+									}
 								}
-								s.append("\r\n");
 
-								//例句
-								Elements examplesLists = meanItem.select("div.exampleLists");//例句们
-								for (Element exampleList : examplesLists) {
-									s.append("    ~");
-									appendCtn(s, exampleList.select("span.collinsOrder"));
-									s.append(exampleList.select("div.examples").get(0).child(0).text());
-									s.append("\r\n         ");
-									s.append(exampleList.select("div.examples").get(0).child(1).text());
-									s.append("\r\n");
+								//collins-intro部分
+								Elements intros = wtContainer.select("p.collins-intro");
+								if(intros != null && intros.size() > 0) {
+									unit.setCollinsIntro(intros.first().text().trim());
 								}
-								if(collinsMajorTrans.size() > 0) {
-									s.append("------------------------------------------------------\r\n");
+
+								Elements ulOls = wtContainer.select("ul.ol");
+								for(Element ulOl : ulOls) {
+									for (Element meanItem : ulOl.children()) {
+										//该单词该类别的解释，比如1.COUNT statement 意思 例……
+										ExplainUnitItem explainUnitItem = unit.new ExplainUnitItem();
+										//同上
+										Elements collinsMajorTrans = meanItem.select("div.collinsMajorTrans");
+										String meanStr = collinsMajorTrans.select("p").text();//解释文字
+										//加了关键词后的句子
+										String modMeanStr = "";
+										//把句子中的关键词加上括号
+										Pattern p = Pattern.compile(word, Pattern.CASE_INSENSITIVE);
+										Matcher m = p.matcher(meanStr);
+										if (m.find()) {
+											String wordTemp = m.group();
+											modMeanStr = meanStr.replace(wordTemp, "[" + wordTemp + "]");
+										} else {
+											modMeanStr = meanStr;
+										}
+										explainUnitItem.setTypeAndExplain(modMeanStr);
+										
+										Elements examplesLists = meanItem.select("div.exampleLists");//例句们
+										for (Element exampleList : examplesLists) {
+											ItemExampleUnit exampleUnit = explainUnitItem.new ItemExampleUnit();
+											exampleUnit.setExample(exampleList.select("div.examples").get(0).child(0).text().trim());
+											exampleUnit.setHanTrans(exampleList.select("div.examples").get(0).child(1).text().trim());
+											explainUnitItem.getUnits().add(exampleUnit);
+										}
+										unit.getExplainUnitItems().add(explainUnitItem);
+									}
 								}
+								exp.getUsageList().add(unit);
 							}
 						}
-						//---
 					}
 				}
 			}
@@ -206,52 +256,13 @@ public class YoudaoCollinsFetcher implements Fetcher {
 			
 		} catch (NullPointerException ne) {
 			System.out.println("解析未能完全成功，请检查" + getClass().getName() + "\r\n或将此Bug报告给https://github.com/rankun203/YoudaoDict/issues");
+			return true;
 		}
-		return new String(s);
+		return true;
 	}
 
 	/**
-	 * 添加了非空判断的功能
-	 * @param s 要给谁后面追加字符串？
-	 * @param string 追加的字符串是？
-	 */
-	private boolean appendCtn(StringBuilder s, String string) {
-		if (string != null && !string.equals("")) {
-			s.append(string);
-			return true;
-		}
-		return false;
-	}
-	/**
-	 * 添加了非空判断的功能
-	 * @param s 要给谁后面追加字符串？
-	 * @param string 要从哪个元素中提取字符串？
-	 */
-	private boolean appendCtn(StringBuilder s, Elements eles) {
-		if (eles != null && eles.first() != null) {
-			String firstText = eles.first().text();
-			s.append(firstText);
-			return true;
-		}
-		return false;
-	}
-	/**
-	 * 添加了非空判断的功能
-	 * @param s 要给谁后面追加字符串？
-	 * @param string 要从哪个元素中提取字符串？
-	 */
-	private boolean appendCtn(StringBuilder s, Element ele) {
-		if (ele != null) {
-			String firstText = ele.text();
-			s.append(firstText);
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * @param word
-	 *            要查询的单词
+	 * @param word 要查询的单词
 	 * @return 根据单词得到的整个页面
 	 */
 	public String fetchPage(String word) {
@@ -288,5 +299,8 @@ public class YoudaoCollinsFetcher implements Fetcher {
 	@Override
 	public void setStyleType(Fetcher.StyleType styleType) {
 		this.styleType = styleType;
+	}
+	public YoudaoCollinsExplain getExp() {
+		return exp;
 	}
 }

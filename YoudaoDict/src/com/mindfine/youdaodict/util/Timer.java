@@ -1,4 +1,4 @@
-package com.mindfine.youdaodict;
+package com.mindfine.youdaodict.util;
 
 public class Timer {
 	private long startTime;

@@ -1,7 +1,11 @@
 package com.mindfine.youdaodict.explain;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.mindfine.youdaodict.explain.YoudaoCollinsExplain.ExplainUnit.ExplainUnitItem;
+import com.mindfine.youdaodict.explain.YoudaoCollinsExplain.ExplainUnit.ExplainUnitItem.ItemExampleUnit;
 
 
 /**
@@ -9,15 +13,7 @@ import java.util.List;
  * 解释对象，存储一个解释的用途、音标、解释等等信息
  */
 public class YoudaoCollinsExplain {
-	private String word;
-	/**
-	 * 英语发音地址
-	 */
-	private String enVoiceUri;
-	/**
-	 * 美语发音地址
-	 */
-	private String usVoiceUri;
+	private String word = "";
 	/**
 	 * 一个单词的不同用法，每个用法是一个独立的ExplainUnit，usageList里面装的就是这个单词的ExplainUnit们
 	 */
@@ -26,18 +22,18 @@ public class YoudaoCollinsExplain {
 	public YoudaoCollinsExplain() {usageList = new LinkedList<ExplainUnit>();}
 	public YoudaoCollinsExplain(String word) {
 		this.word = word;
-		usageList = new LinkedList<ExplainUnit>();
+		usageList = new ArrayList<ExplainUnit>();
 	}
 
 	public class ExplainUnit {
 		/**
 		 * 当前解释的用法，比如说SORT OR KIND
 		 */
-		private String usage;
+		private String usage = "";
 		/**
 		 * 音标，[taIp]
 		 */
-		private String phonetic;
+		private String phonetic = "";
 		/**
 		 * 星标等级，3即三星[* * *]
 		 */
@@ -57,10 +53,10 @@ public class YoudaoCollinsExplain {
 		/**
 		 * 一些介绍文字
 		 */
-		private String collinsIntro;
+		private String collinsIntro = "";
 		private List<ExplainUnitItem> explainUnitItems;
 		
-		public ExplainUnit () {explainUnitItems = new LinkedList<ExplainUnitItem>();}
+		public ExplainUnit () {explainUnitItems = new ArrayList<ExplainUnitItem>();}
 		
 		/**
 		 * 每条独立的解释，包含英文用法示例，中文解释，英文例子，例子翻译等等
@@ -69,7 +65,7 @@ public class YoudaoCollinsExplain {
 			/**
 			 * 这一条意思的主要部份，包括类型（比如V-T/V-I）和英语用法，和汉语解释
 			 */
-			private String typeAndExplain;
+			private String typeAndExplain = "";
 			/**
 			 * 这一条意思的所有例子
 			 */
@@ -77,7 +73,7 @@ public class YoudaoCollinsExplain {
 			/**
 			 * 初始化存储例子们的链表
 			 */
-			public ExplainUnitItem () {units = new LinkedList<ItemExampleUnit>();}
+			public ExplainUnitItem () {units = new ArrayList<ItemExampleUnit>();}
 			/**
 			 * 每一个例子，比如name的第一条解释有两个例子，每一个例子都是一个ItemExampleUnit对象
 			 */
@@ -85,11 +81,11 @@ public class YoudaoCollinsExplain {
 				/**
 				 * 例子英文
 				 */
-				private String example;
+				private String example = "";
 				/**
 				 * 例子中文翻译
 				 */
-				private String hanTrans;
+				private String hanTrans = "";
 				public String getExample() {return example;}
 				public void setExample(String example) {this.example = example;}
 				public String getHanTrans() {return hanTrans;}
@@ -99,7 +95,6 @@ public class YoudaoCollinsExplain {
 			public String getTypeAndExplain() {return typeAndExplain;}
 			public void setTypeAndExplain(String typeAndExplain) {this.typeAndExplain = typeAndExplain;}
 			public List<ItemExampleUnit> getUnits() {return units;}
-			public void setUnits(List<ItemExampleUnit> units) {this.units = units;}
 		}
 
 		public String getUsage() {return usage;}
@@ -123,8 +118,183 @@ public class YoudaoCollinsExplain {
 	public String getWord() {return word;}
 	public void setWord(String word) {this.word = word;}
 	public List<ExplainUnit> getUsageList() {return usageList;}
-	public String getEnVoiceUri() {return enVoiceUri;}
-	public void setEnVoiceUri(String enVoiceUri) {this.enVoiceUri = enVoiceUri;}
-	public String getUsVoiceUri() {return usVoiceUri;}
-	public void setUsVoiceUri(String usVoiceUri) {this.usVoiceUri = usVoiceUri;}
+	@Override
+	public String toString() {
+		StringBuilder exp = new StringBuilder();
+		List<ExplainUnit> usageListTmp = getUsageList();
+		if(usageListTmp != null && usageListTmp.size() > 0) {
+			for(ExplainUnit explainUnitTmp : usageListTmp) {
+				String usageTmp = explainUnitTmp.getUsage();
+				// +3 某些提示信息
+				if(usageTmp != null && !usageTmp.equals("")) {
+					exp.append(explainUnitTmp.getUsage() + "\r\n");
+				}
+				exp.append(getWord() + " ");
+				exp.append(explainUnitTmp.getPhonetic() + " ");
+				int starTmp = explainUnitTmp.getStar();
+				if(starTmp != 0) {
+					exp.append('[');
+					for(int i = 0; i < starTmp; i++) {
+						if(i != starTmp - 1) {
+							exp.append("* ");
+						} else {
+							exp.append('*');
+						}
+					}
+					exp.append("] ");				
+				}
+				List<String> formsTmp = explainUnitTmp.getForm();
+				if(formsTmp != null && formsTmp.size() > 0) {
+					exp.append('(');
+					for(int i = 0; i < formsTmp.size(); i++) {
+						if(i != (formsTmp.size() - 1)) {
+							exp.append(formsTmp.get(i) + ", ");
+						} else {
+							exp.append("" + formsTmp.get(i));
+						}
+					}				
+					exp.append(") ");
+				}
+				List<String> ranksTmp = explainUnitTmp.getRank();
+				if(ranksTmp != null && ranksTmp.size() > 0) {
+					exp.append('|');
+					for(int i = 0; i < ranksTmp.size(); i++) {
+						if(i != (ranksTmp.size() - 1)) {
+							exp.append(ranksTmp.get(i) + ' ');
+						} else {
+							exp.append("" + ranksTmp.get(i));
+						}
+					}				
+					exp.append('|');
+				}
+				List<String> additionalsTmp = explainUnitTmp.getAdditional();
+				if(additionalsTmp != null && additionalsTmp.size() > 0) {
+					exp.append('(');
+					for(int i = 0; i < additionalsTmp.size(); i++) {
+						if(i != (additionalsTmp.size() - 1)) {
+							exp.append(additionalsTmp.get(i) + ", ");
+						} else {
+							exp.append("" + additionalsTmp.get(i));
+						}
+					}
+					exp.append(") ");
+				}
+				exp.append("\r\n\r\n");
+				exp.append("意义\r\n");
+				exp.append("-------------------------------------------\r\n");
+				int noTmp = 1;
+				for(ExplainUnitItem itemTmp : explainUnitTmp.getExplainUnitItems()) {
+					exp.append(noTmp + ". ");
+					exp.append(itemTmp.getTypeAndExplain() + "\r\n");
+					List<ItemExampleUnit> itemsTmp = itemTmp.getUnits();
+					if(itemsTmp != null && itemsTmp.size() > 0) {
+						for(ItemExampleUnit tmp : itemsTmp) {
+							exp.append("    ~例：");
+							exp.append(tmp.getExample() + "\r\n");
+							exp.append("         " + tmp.getHanTrans() + "\r\n");
+						}
+					}
+					noTmp++;
+				}
+			}
+		}
+		return new String(exp);
+	}
+	public List<String> toSplitedString() {
+		List<String> expList = new ArrayList<String>();
+		
+		List<ExplainUnit> usageListTmp = getUsageList();
+		if(usageListTmp != null && usageListTmp.size() > 0) {
+			for(ExplainUnit explainUnitTmp : usageListTmp) {
+				String usageTmp = explainUnitTmp.getUsage();
+				// +3 某些提示信息
+				if(usageTmp != null && !usageTmp.equals("")) {
+					expList.add(explainUnitTmp.getUsage());
+				}
+				expList.add(getWord());
+				expList.add(explainUnitTmp.getPhonetic());
+				
+				StringBuilder starStr = new StringBuilder();
+				int starTmp = explainUnitTmp.getStar();
+				if(starTmp != 0) {
+					starStr.append('[');
+					for(int i = 0; i < starTmp; i++) {
+						if(i != starTmp - 1) {
+							starStr.append("* ");
+						} else {
+							starStr.append('*');
+						}
+					}
+					starStr.append("] ");				
+				}
+				expList.add(new String(starStr));
+				
+				StringBuilder formsStr = new StringBuilder();
+				List<String> formsTmp = explainUnitTmp.getForm();
+				if(formsTmp != null && formsTmp.size() > 0) {
+					formsStr.append('(');
+					for(int i = 0; i < formsTmp.size(); i++) {
+						if(i != (formsTmp.size() - 1)) {
+							formsStr.append(formsTmp.get(i) + ", ");
+						} else {
+							formsStr.append("" + formsTmp.get(i));
+						}
+					}				
+					formsStr.append(") ");
+				}
+				expList.add(new String(formsStr));
+				
+				StringBuilder ranksStr = new StringBuilder();
+				List<String> ranksTmp = explainUnitTmp.getRank();
+				if(ranksTmp != null && ranksTmp.size() > 0) {
+					ranksStr.append('|');
+					for(int i = 0; i < ranksTmp.size(); i++) {
+						if(i != (ranksTmp.size() - 1)) {
+							ranksStr.append(ranksTmp.get(i) + ' ');
+						} else {
+							ranksStr.append("" + ranksTmp.get(i));
+						}
+					}				
+					ranksStr.append('|');
+				}
+				expList.add(new String(ranksStr));
+				
+				StringBuilder additionalsStr = new StringBuilder();
+				List<String> additionalsTmp = explainUnitTmp.getAdditional();
+				if(additionalsTmp != null && additionalsTmp.size() > 0) {
+					additionalsStr.append('(');
+					for(int i = 0; i < additionalsTmp.size(); i++) {
+						if(i != (additionalsTmp.size() - 1)) {
+							additionalsStr.append(additionalsTmp.get(i) + ", ");
+						} else {
+							additionalsStr.append("" + additionalsTmp.get(i));
+						}
+					}
+					additionalsStr.append(") ");
+				}
+				expList.add(new String(additionalsStr));
+				
+				int noTmp = 1;
+				for(ExplainUnitItem itemTmp : explainUnitTmp.getExplainUnitItems()) {
+					expList.add(noTmp + "");
+					String typeAndExplain = itemTmp.getTypeAndExplain().trim();
+					int firstSpaceTmp = typeAndExplain.indexOf(" ");
+					String typeTmp = typeAndExplain.substring(0, firstSpaceTmp);
+					String explainTmp = typeAndExplain.substring(typeAndExplain.indexOf(" "), typeAndExplain.length());
+					expList.add(typeTmp.trim());
+					expList.add(explainTmp.trim());
+					List<ItemExampleUnit> itemsTmp = itemTmp.getUnits();
+					if(itemsTmp != null && itemsTmp.size() > 0) {
+						for(ItemExampleUnit tmp : itemsTmp) {
+							expList.add(tmp.getExample());
+							expList.add(tmp.getHanTrans());
+						}
+					}
+					noTmp++;
+				}
+			}
+		}
+		return expList;
+	}
+	
 }

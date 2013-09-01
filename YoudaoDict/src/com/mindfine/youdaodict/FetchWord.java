@@ -7,6 +7,7 @@ import com.mindfine.youdaodict.pronouncer.Pronouncer;
 import com.mindfine.youdaodict.pronouncer.Pronouncer.PronounceType;
 import com.mindfine.youdaodict.pronouncer.YoudaoOfflinePronouncer;
 import com.mindfine.youdaodict.pronouncer.YoudaoPronouncer;
+import com.mindfine.youdaodict.util.Timer;
 
 /**
  * <h3>爬单词<h3><br>
@@ -164,27 +165,27 @@ public class FetchWord {
 	}
 
 	private static void fetchAllAndSavetoDir() {
-		// TODO Auto-generated method stub
+		// TODO 未实现的功能
 
 	}
 
 	private static void fetchAllAndSavetoFile() {
-		// TODO Auto-generated method stub
+		// TODO 未实现的功能
 
 	}
 
 	private static void fetchAllAndPrint() {
-		// TODO Auto-generated method stub
+		// TODO 未实现的功能
 
 	}
 
 	private static void fetchAndSavetoFile(String word2) {
-		// TODO Auto-generated method stub
+		// TODO 未实现的功能
 
 	}
 
 	private static void fetchAndSavetoDir(String word2) {
-		// TODO Auto-generated method stub
+		// TODO 未实现的功能
 
 	}
 
