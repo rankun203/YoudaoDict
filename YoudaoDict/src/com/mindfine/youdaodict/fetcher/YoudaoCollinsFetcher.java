@@ -42,6 +42,36 @@ public class YoudaoCollinsFetcher implements Fetcher {
 	public String getResFromWord(String word) {
 		return jsoupFetcher(word);
 	}
+	public Document prepareDoc(String word){
+		String queryUrl = fetchFromURL + "?q=" + word;
+		Document doc = null;
+		try {
+			URL qu = new URL(queryUrl);
+			doc = Jsoup.parse(qu, 16000);
+		} catch (MalformedURLException me) {
+			System.err.println("ERROR, queryUrl is invalid.");
+			me.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			System.err.println("open connection failed.\r\nNetwork may not accessible.");
+			return null;
+		}
+		return doc;
+	}
+	public String getSplitedFromWord(String word) {
+		Document doc = prepareDoc(word);
+		if(doc == null) {
+			return null;
+		}
+		String rtn = null;
+		try{
+			queryPlainExplain(doc, word);
+			rtn = getExp().toShellStyleString();
+		} catch (NullPointerException ne) {
+			return null;
+		}
+		return rtn;
+	}
 
 	/**
 	 * @param word 要查询的单词
@@ -72,15 +102,9 @@ public class YoudaoCollinsFetcher implements Fetcher {
 			return null;
 		} catch (IOException e) {
 			System.err.println("open connection failed.\r\nNetwork may not accessible.");
-			e.printStackTrace();
 			return null;
 		} catch (NullPointerException e) {
 			return null;
-		}
-
-		List<String> tmpList = getExp().toSplitedString();
-		for(String tmp : tmpList) {
-			System.err.println(tmp);
 		}
 
 		return rtn;
@@ -250,10 +274,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 					}
 				}
 			}
-			
-			
-	
-			
+
 		} catch (NullPointerException ne) {
 			System.out.println("解析未能完全成功，请检查" + getClass().getName() + "\r\n或将此Bug报告给https://github.com/rankun203/YoudaoDict/issues");
 			return true;

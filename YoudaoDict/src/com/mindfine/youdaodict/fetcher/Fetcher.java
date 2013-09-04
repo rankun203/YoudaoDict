@@ -52,5 +52,6 @@ public interface Fetcher {
 	 * @param styleType 要设置的类型
 	 */
 	public void setStyleType(Fetcher.StyleType styleType);
+	public String getSplitedFromWord(String word2);
 
 }

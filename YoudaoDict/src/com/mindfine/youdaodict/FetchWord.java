@@ -87,6 +87,8 @@ public class FetchWord {
 					fetchAndSavetoDir(word);
 				} else if (method.equals("file")) {
 					fetchAndSavetoFile(word);
+				} else if (method.equals("split")) {
+					fetchAndSplit(word);
 				} else {
 					System.err.println("未知的输出方式，仅支持：print、folder、file三种方式");
 					System.exit(0);
@@ -102,6 +104,8 @@ public class FetchWord {
 					fetchAllAndSavetoDir();
 				} else if (method.equals("file")) {
 					fetchAllAndSavetoFile();
+				} else if (method.equals("split")) {
+					fetchAndSplit(word);
 				} else {
 					System.err.println("未知的输出方式，仅支持：print、folder、file三种方式");
 					System.exit(0);
@@ -184,6 +188,21 @@ public class FetchWord {
 
 	}
 
+	private static void fetchAndSplit(String word2) {
+		fetcher = new YoudaoCollinsFetcher();
+		fetcher.setStyleType(styleType);
+		String rtnStr = fetcher.getSplitedFromWord(word2);
+		if(rtnStr == null) {
+			System.out.println("你所查询的单词暂未收录。");
+		} else {
+			System.out.println(rtnStr);
+		}
+		
+		pronouncer = new YoudaoPronouncer();
+		pronouncer.pronounce(word2, pType);
+
+	}
+
 	private static void fetchAndSavetoDir(String word2) {
 		// TODO 未实现的功能
 
@@ -242,6 +261,7 @@ public class FetchWord {
 "            print  \r\n" +
 "           可能的值有  \r\n" +
 "            print    将结果打印在屏幕上  \r\n" +
+"            split    输出分裂的解释片段，可用其他工具进行显示格式化  \r\n" +
 "            folder   将结果存入指定的文件夹中  \r\n" +
 "                      参数列表中必须包含-d选项并指明存储的位置  \r\n" +
 "            file     将结果存入单个文件中  \r\n" +

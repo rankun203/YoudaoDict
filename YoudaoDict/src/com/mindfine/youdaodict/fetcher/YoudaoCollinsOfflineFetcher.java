@@ -146,6 +146,13 @@ public class YoudaoCollinsOfflineFetcher implements Fetcher{
 	@Override
 	public void setStyleType(StyleType styleType) {
 	}
+
+
+	@Override
+	public String getSplitedFromWord(String word2) {
+		// TODO 未实现离线查询分裂词库
+		return null;
+	}
 	
 
 }
