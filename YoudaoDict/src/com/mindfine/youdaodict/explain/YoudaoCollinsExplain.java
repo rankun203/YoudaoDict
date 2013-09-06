@@ -197,6 +197,7 @@ public class YoudaoCollinsExplain {
 						}
 					}
 					noTmp++;
+					exp.append("----------------------------------------------------\r\n");
 				}
 			}
 		}
@@ -308,10 +309,10 @@ public class YoudaoCollinsExplain {
 				String usageTmp = explainUnitTmp.getUsage();
 				// +3 某些提示信息
 				if(usageTmp != null && !usageTmp.equals("")) {
-					tps.append("\033[1m\033[4m" + explainUnitTmp.getUsage() + "\033[0m\r\n");
+					tps.append("\\033[1m\\033[4m" + explainUnitTmp.getUsage() + "\\033[0m\\n");
 				}
 				String firstLineTmp = "";
-				tps.append("\033[34m\033[1m" + getWord() + "\033[0m");
+				tps.append("\\033[34m\\033[1m" + getWord() + "\\033[0m");
 				tps.append(" " + explainUnitTmp.getPhonetic() + " ");
 				firstLineTmp += getWord() + " " + explainUnitTmp.getPhonetic() + " ";
 				
@@ -322,11 +323,12 @@ public class YoudaoCollinsExplain {
 						if(i != starTmp - 1) {
 							starStr.append("* ");
 						} else {
-							starStr.append('*');
+							starStr.append("*");
 						}
 					}
 				}
-				tps.append(" \033[31m\033[1m" + new String(starStr) + "\033[0m  ");
+
+				tps.append(" \\033[31m\\033[1m" + new String(starStr) + "\\033[0m  ");
 				firstLineTmp += " " + new String(starStr) + "  ";
 				
 				StringBuilder formsStr = new StringBuilder();
@@ -342,7 +344,7 @@ public class YoudaoCollinsExplain {
 					}
 					formsStr.append(")  ");
 				}
-				tps.append("\033[36m" + new String(formsStr) + "\033[0m");
+				tps.append("\\033[36m" + new String(formsStr) + "\\033[0m");
 				firstLineTmp += new String(formsStr);
 				
 				StringBuilder ranksStr = new StringBuilder();
@@ -356,7 +358,7 @@ public class YoudaoCollinsExplain {
 						}
 					}				
 				}
-				tps.append("\033[1m" + new String(ranksStr) + "\033[0m");
+				tps.append("\\033[1m" + new String(ranksStr) + "\\033[0m");
 				firstLineTmp += new String(ranksStr);
 				
 				StringBuilder additionalsStr = new StringBuilder();
@@ -372,42 +374,43 @@ public class YoudaoCollinsExplain {
 					}
 					additionalsStr.append(") ");
 				}
-				tps.append("\033[36m" + new String(additionalsStr) + "\033[0m\r\n");
+				tps.append("\\033[36m" + new String(additionalsStr) + "\\033[0m\\n");
 				firstLineTmp += new String(additionalsStr);
-				tps.append("\033[36m");
+				tps.append("\\033[36m");
 				for(int q = 0; q < firstLineTmp.length(); q++) {
 					tps.append('-');
 				}
-				tps.append("\033[0m\r\n");
+				tps.append("\\033[0m\\n");
 				int noTmp = 1;
 				for(ExplainUnitItem itemTmp : explainUnitTmp.getExplainUnitItems()) {
 					if(noTmp < 10) {
-						tps.append("\033[40;37m\033[1m " + noTmp + "\033[0m. \033[1m");
+						tps.append("\\033[40;37m\\033[1m " + noTmp + "\\033[0m. \\033[1m");
 					} else {
-						tps.append("\033[40;37m\033[1m" + noTmp + "\033[0m. \033[1m");
+						tps.append("\\033[40;37m\\033[1m" + noTmp + "\\033[0m. \\033[1m");
 					}
+					//TYPE 替换方式为搜索句中的所有大写字母
 					String typeAndExplain = itemTmp.getTypeAndExplain().trim();
 					int firstSpaceTmp = typeAndExplain.indexOf(" ");
 					String typeTmp = typeAndExplain.substring(0, firstSpaceTmp);
 					String explainTmp = typeAndExplain.substring(typeAndExplain.indexOf(" "), typeAndExplain.length());
-					tps.append(typeTmp.trim() + "\033[0m ");
+					tps.append(typeTmp.trim() + "\\033[0m ");
 					String highLightedExplainTmp = explainTmp.trim();
 					//把[关键字]替换成带有颜色的关键字
-					Pattern pTmp = Pattern.compile("\\[(.*?)\\]");
+					Pattern pTmp = Pattern.compile("\\<(.*?)\\>");
 					Matcher mTmp = pTmp.matcher(highLightedExplainTmp);
 					while(mTmp.find()) {
 						String mTmpNext = mTmp.group();
-						highLightedExplainTmp = highLightedExplainTmp.replace(mTmpNext, "\033[0m\033[34m\033[1m" + mTmpNext.substring(1, mTmpNext.length() - 1) + "\033[0m");
+						highLightedExplainTmp = highLightedExplainTmp.replace(mTmpNext, "\\033[0m\\033[34m\\033[1m" + mTmpNext.substring(1, mTmpNext.length() - 1) + "\\033[0m");
 					}
-					tps.append(highLightedExplainTmp + "\r\n");
+					tps.append(highLightedExplainTmp + "\\n");
 					List<ItemExampleUnit> itemsTmp = itemTmp.getUnits();
 					if(itemsTmp != null && itemsTmp.size() > 0) {
 						for(ItemExampleUnit tmp : itemsTmp) {
-							tps.append("\033[42;37m\033[1m例\033[0m：" + tmp.getExample() + "\r\n");
-							tps.append("    " + tmp.getHanTrans() + "\r\n");
+							tps.append("\\033[42;37m\\033[1m例\\033[0m：" + tmp.getExample() + "\\n");
+							tps.append("    " + tmp.getHanTrans() + "\\n");
 						}
 					}
-					tps.append("\033[36m----------------------------------------------\033[0m\r\n");
+					tps.append("\\033[36m----------------------------------------------\\033[0m\\n");
 					noTmp++;
 				}
 			}

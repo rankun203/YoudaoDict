@@ -252,7 +252,7 @@ public class YoudaoCollinsFetcher implements Fetcher {
 										Matcher m = p.matcher(meanStr);
 										if (m.find()) {
 											String wordTemp = m.group();
-											modMeanStr = meanStr.replace(wordTemp, "[" + wordTemp + "]");
+											modMeanStr = meanStr.replace(wordTemp, "<" + wordTemp + ">");
 										} else {
 											modMeanStr = meanStr;
 										}
