@@ -3,6 +3,6 @@ jdk:
   - oraclejdk7
   - openjdk7
   - openjdk6
+before_script:
+  - cd YoudaoDict
 
-before_script : "echo 'build start'"
-after_script : "echo 'build end'"
