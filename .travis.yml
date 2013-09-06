@@ -5,4 +5,7 @@ jdk:
   - openjdk6
 before_script:
   - cd YoudaoDict
-
+after_script:
+  - mvn assembly:assembly
+  - cd target
+  - java YoudaoDict-0.0.3-SNAPSHOT-jar-with-dependencies.jar name
