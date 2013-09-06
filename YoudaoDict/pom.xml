@@ -2,8 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.mindfine.youdaodict</groupId>
   <artifactId>YoudaoDict</artifactId>
-  <packaging>pom</packaging>
-  <version>0.0.3-SNAPSHOT</version>
+  <version>0.0.3</version>
   <name>YoudaoDict</name>
   <description>有道词典内容截取器</description>
   
@@ -36,12 +35,13 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.7</source>
+          <target>1.7</target>
         </configuration>
       </plugin>
       <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.4</version>
           <configuration>
               <descriptorRefs>
                   <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -53,6 +53,41 @@
               </archive>
           </configuration>
       </plugin>
+      <plugin>  
+          <groupId>org.apache.maven.plugins</groupId>  
+          <artifactId>maven-jar-plugin</artifactId>  
+          <version>2.4</version>
+          <configuration>  
+              <archive>  
+                  <manifest>  
+                      <addClasspath>true</addClasspath>  
+                      <mainClass>com.mindfine.youdaodict.FetchWord</mainClass>  
+                  </manifest>  
+              </archive>  
+          </configuration>  
+      </plugin> 
+      
+<!-- 
+      <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+	    <artifactId>maven-shade-plugin</artifactId>
+	    <executions>
+	      <execution>
+	        <phase>package</phase>
+	        <goals>
+	          <goal>shade</goal>
+	        </goals>
+	        <configuration>
+	          <transformers>
+	            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+	              <mainClass>com.mindfine.youdaodict.FetchWord</mainClass>
+	            </transformer>
+	          </transformers>
+	        </configuration>
+	      </execution>
+	    </executions>
+      </plugin>
+ -->
     </plugins>
   </build>
 </project>
