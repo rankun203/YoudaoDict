@@ -1,9 +1,14 @@
+YoudaoDict
+==========
 描述：网页词典内容截取器  
 最新0.2.1版下载地址：[百度网盘](http://pan.baidu.com/share/link?shareid=3649479366&uk=2684465378 "dist_0.2.1.7z")
   
 性能指标：本机测试离线查询单词200ms之内
-  
-用法：FetchWord [-m <outputType>][ -iw <word>|-is <file>][ -d <dir>|-of <file>][ -s <outputStyle> ][ -c <dictionary>][ -p <pronounceLocal>][ -e <executableMp3PlayerLocation>][ | -h]
+
+用法
+---
+```bash
+FetchWord [-m <outputType>][ -iw <word>|-is <file>][ -d <dir>|-of <file>][ -s <outputStyle> ][ -c <dictionary>][ -p <pronounceLocal>][ -e <executableMp3PlayerLocation>][ | -h]
   
   -iw     指定单词  
   -is     指定单词列表文件，程序扫描该文件读取所有单词并抓取其释义  
@@ -47,34 +52,26 @@
             mpg321  
   
   -h      显示本帮助  
-  
-用法示例：  
-  
-1.查看帮助  
-java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -h  
-  
-2.获取 hello 的释义并将结果打印出来  
-java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -iw hello -m print  
-  
-3.获取 hello 的释义并将结果存入 "/home/mindfine/dict/" 文件夹中  
-java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -iw hello -od /home/mindfine/dict/  
-  
-4.获取 hello 的释义并将结果存入 "/home/mindfine/dict.txt" 文件中  
-java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -iw hello -of /home/mindfine/dict.txt  
-  
-5.解析 "/home/mindfine/words.txt" 中的所有单词，并将释义存入 "/home/mindfine/dict/" 文件夹中  
-java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -is /home/mindfine/words.txt -od /home/mindfine/dict/  
-  
-6.解析 "/home/mindfine/words.txt" 中的所有单词，并将释义写入 "/home/mindfine/dict.txt" 文件中  
-java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -is /home/mindfine/words.txt -of /home/mindfine/dict.txt  
-  
-  
+```
+用法示例  
+--------
+1.查看帮助
+
+    java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -h
+
+2.获取 hello 的释义并将结果打印出来
+
+    java -cp .:/home/mindfine/Java/lib/jsoup/jsoup-1.7.2.jar com.mindfine.youdaodict.FetchWord -iw hello -m print
+
 源单词文件的格式为：  
-hello  
-many  
-tiny  
-funny  
-...  
+
+    hello  
+    many  
+    tiny  
+    funny  
+    ...
   
-请在项目主页报告程序的错误，欢迎任何形式的复制和转发  
-项目主页：https://github.com/rankun203/YoudaoDict
+请在项目主页报告程序的错误，欢迎任何形式的复制和转发
+项目主页：[https://github.com/rankun203/YoudaoDict][]
+
+[https://github.com/rankun203/YoudaoDict]: https://github.com/rankun203/YoudaoDict
