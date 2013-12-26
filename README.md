@@ -75,3 +75,7 @@ FetchWord [-m <outputType>][ -iw <word>|-is <file>][ -d <dir>|-of <file>][ -s <o
 项目主页：[https://github.com/rankun203/YoudaoDict][]
 
 [https://github.com/rankun203/YoudaoDict]: https://github.com/rankun203/YoudaoDict
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/rankun203/youdaodict/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
