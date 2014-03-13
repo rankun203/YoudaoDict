@@ -10,8 +10,8 @@ YoudaoDict
 
 ###安装
 
-1. 简单方法：下载解压，然后执行`java -jar dic.jar hello`，帮助：`java -jar dic.jar -h`。
-2. 查询离线数据库：`java -jar dic.jar -io -iw count`。
+1. 简单方法：下载解压，然后执行`java -jar dic.jar word`，帮助：`java -jar dic.jar -h`。
+2. 查询离线数据库：`java -jar dic.jar -io -iw word`。
 3. 使用辅助脚本
 
 ###手动编译
