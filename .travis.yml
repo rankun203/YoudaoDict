@@ -1,16 +1,8 @@
 language: java
 jdk:
   - oraclejdk7
-before_script:
-  - cd YoudaoDict
 after_script:
   - mvn assembly:assembly
   - cd target
-  - sudo apt-get install mpg321
-  - java -jar YoudaoDict-0.0.3-jar-with-dependencies.jar name
-  - java -jar YoudaoDict-0.0.3-jar-with-dependencies.jar what
-  - java -jar YoudaoDict-0.0.3-jar-with-dependencies.jar funny
-  - java -jar YoudaoDict-0.0.3-jar-with-dependencies.jar many
-  - java -jar YoudaoDict-0.0.3-jar-with-dependencies.jar dependency
-  - java -jar YoudaoDict-0.0.3-jar-with-dependencies.jar hunt
-  - java -jar YoudaoDict-0.0.3-jar-with-dependencies.jar more
+  - java -jar YoudaoDict-*-jar-with-dependencies.jar -p no -iw name
+  - java -jar YoudaoDict-*-jar-with-dependencies.jar -p no -iw what
