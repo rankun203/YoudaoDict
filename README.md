@@ -6,9 +6,9 @@ YoudaoDict[![Build Status](https://drone.io/github.com/rankun203/YoudaoDict/stat
 新鲜下载：<a href="https://drone.io/github.com/rankun203/YoudaoDict/files" target="_blank">drone.io</a>
 tips:
 
-  1. 至少需要下载YoudaoDict-x.x.x-jar-with-dependencies.jar才能运行。
-  2. YoudaoCollinsOfflineData.7z是词典的离线解释数据，如果需要离线查词下载下来之后放在xx.jar同目录下面。
-  3. YoudaoDictArchitecture.asta是类图。
+  1. 至少需要下载`YoudaoDict-x.x.x-jar-with-dependencies.jar`才能运行。
+  2. `YoudaoCollinsOfflineData.7z`是词典的离线解释数据，如果需要离线查词下载下来之后放在xx.jar同目录下面。
+  3. `YoudaoDictArchitecture.asta`是类图。
   
 性能指标：本机测试离线查询单词200ms之内，最近一次用wifi在线查询funny耗时764ms。
 
