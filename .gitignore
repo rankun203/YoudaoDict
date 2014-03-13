@@ -4,6 +4,5 @@
 *.idx
 *.swp
 
-dist/
 bin/
 target/
