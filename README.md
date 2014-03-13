@@ -14,6 +14,13 @@ YoudaoDict
 2. 查询离线数据库：`java -jar dic.jar -io -iw count`
 3. 使用辅助脚本
 
+###手动编译
+
+项目使用maven作为构建工具
+
+1. 进入`YoudaoDict/YoudaoDict`目录然后运行`mvn package`，将在target目录下面生成一个不带依赖的可执行jar包，执行的时候需要在`java`命令之后指定`-cp .:/pathtojsoup.jar`
+2. 运行`mvn package assembly:single`可以生成一个带依赖的jar包
+
 ###用法
 ```bash
 FetchWord [-m <outputType>][ -iw <word>|-is <file>][ -d <dir>|-of <file>][ -s <outputStyle> ][ -c <dictionary>][ -p <pronounceLocal>][ -e <executableMp3PlayerLocation>][ | -h]
