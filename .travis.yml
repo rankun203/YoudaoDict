@@ -1,8 +1,0 @@
-language: java
-jdk:
-  - oraclejdk7
-after_script:
-  - mvn assembly:assembly
-  - cd target
-  - java -jar YoudaoDict-*-jar-with-dependencies.jar -p no -iw name
-  - java -jar YoudaoDict-*-jar-with-dependencies.jar -p no -iw what
