@@ -2,11 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.mindfine.youdaodict</groupId>
   <artifactId>YoudaoDict</artifactId>
-<<<<<<< HEAD
-  <version>0.2.2</version>
-=======
   <version>0.8.1</version>
->>>>>>> d88889342b5b8436d9c5362dc5c31c5979a4948a
   <name>YoudaoDict</name>
   <description>有道词典内容截取器</description>
   
