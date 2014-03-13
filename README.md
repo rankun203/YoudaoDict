@@ -87,7 +87,7 @@ FetchWord [-m <outputType>][ -iw <word>|-is <file>][ -d <dir>|-of <file>][ -s <o
     ...
   
 请在项目主页报告程序的错误，欢迎任何形式的复制和转发
-项目主页：[https://github.com/rankun203/YoudaoDict][]
+项目主页：[https://github.com/rankun203/YoudaoDict][]。
 
 [https://github.com/rankun203/YoudaoDict]: https://github.com/rankun203/YoudaoDict
 
