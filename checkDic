@@ -1,0 +1,64 @@
+#!/bin/bash
+
+tip () {
+	already=`grep $HOME/bin/Words-Note/Words-Note.txt -we $word`
+	if [ "$already" = "" ]
+	then
+		echo "Press 'a' to add \"$word\" to Words-Note"
+	else
+		echo \"$word\" is already added to Words-Note
+	fi
+	echo "Press 'w' to query other word"
+	echo "Press 's' to speak by English again"
+	echo "press 'd' to speak by American English"
+	echo "press 'e' to edit the Words-Note"
+}
+cd $HOME/git/YoudaoDict/dist
+while true
+do
+	read word
+	#查询单词并发英国腔
+	java -cp .:YoudaoDict.jar com.mindfine.youdaodict.pronouncer.YoudaoPronouncer $word-en &
+	java -cp .:YoudaoDict.jar com.mindfine.youdaodict.FetchWord -p no -iw $word | more
+    java -cp .:YoudaoDict.jar com.mindfine.youdaodict.FetchWord -p no -iw what
+	tip
+	for((i=0;i<11;i++))
+	do
+		read -N 1 speak
+		if [ "$speak" = "s" ]
+			then
+				java -cp .:YoudaoDict.jar com.mindfine.youdaodict.pronouncer.YoudaoPronouncer $word-en
+		elif [ "$speak" = "e" ]
+			then
+				vi $HOME/bin/Words-Note/Words-Note.txt
+				tip
+		elif [ "$speak" = "d" ]
+			then
+				java -cp .:YoudaoDict.jar com.mindfine.youdaodict.pronouncer.YoudaoPronouncer $word-us
+		elif [ "$speak" = "a" ]
+			then
+				if [ "$already" = "" ]
+					then
+						echo $word >> $HOME/bin/Words-Note/Words-Note.txt
+						echo ""
+						echo $word was added to Words-Note.
+						#words2anki
+						#echo $word was saved to ankifile
+					else
+						echo \"$word\" is already added to Words-Note
+				fi
+		elif [ "$speak" = "w" ]
+			then
+				clear
+				break
+		else
+			exit
+		fi
+		if [ $i = 10 ]
+		then
+			exit
+		fi
+		already=`grep $HOME/bin/Words-Note/Words-Note.txt -we $word`
+	done
+done
+
