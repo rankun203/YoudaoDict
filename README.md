@@ -4,8 +4,8 @@ YoudaoDict[![Build Status](https://drone.io/github.com/rankun203/YoudaoDict/stat
 没有其它解释，只有柯林斯，也就是说不能汉译英。
 
 新鲜下载：<a href="https://drone.io/github.com/rankun203/YoudaoDict/files" target="_blank">drone.io</a>
-tips:
 
+tips:
   1. 至少需要下载`YoudaoDict-x.x.x-jar-with-dependencies.jar`才能运行。
   2. `YoudaoCollinsOfflineData.7z`是词典的离线解释数据，如果需要离线查词下载下来之后放在xx.jar同目录下面。
   3. `YoudaoDictArchitecture.asta`是类图。
