@@ -1,4 +1,4 @@
-YoudaoDict
+YoudaoDict[![Build Status](https://drone.io/github.com/rankun203/YoudaoDict/status.png)](https://drone.io/github.com/rankun203/YoudaoDict/latest)
 ==========
 描述：小词典，查询的是`Youdao Collins`的解释！
 没有其它解释，只有柯林斯，也就是说不能汉译英。
@@ -8,7 +8,9 @@ YoudaoDict
 性能指标：本机测试离线查询单词200ms之内，最近一次用wifi在线查询funny耗时764ms。
 
 ###TODO
-1. 添加一个快捷键(向上箭头 / 向下箭头), 用于在历史记录中导航.用一个文件专门存储历史记录, 可选用git仓库保存.
+1. 重新添加颜色，之前尝试过添加颜色，但因为脚本中`*`字符的问题，破坏了输出，
+     其实表示单词重要程度的`*`可以用其它字符代替，字符表中有很多星星字符。
+2. 添加一个快捷键(向上箭头 / 向下箭头), 用于在历史记录中导航.用一个文件专门存储历史记录, 可选用git仓库保存.
 
 ###安装
 
@@ -21,7 +23,7 @@ YoudaoDict
 项目使用maven作为构建工具
 
 1. 进入`YoudaoDict/YoudaoDict`目录然后运行`mvn package`，将在target目录下面生成一个不带依赖的可执行jar包，执行的时候需要在`java`命令之后指定`-cp .:/pathtojsoup.jar`。
-2. 运行`mvn package assembly:single`可以生成一个带依赖的jar包，可以手动编译。
+2. 运行`mvn assembly:assembly`可以生成一个带依赖的jar包，可以手动编译。
 
 ###用法
 ```bash
