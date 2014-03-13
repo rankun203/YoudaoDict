@@ -8,6 +8,11 @@ YoudaoDict
 ###TODO
 1. 添加一个快捷键(向上箭头 / 向下箭头), 用于在历史记录中导航.用一个文件专门存储历史记录, 可选用git仓库保存.
 
+###安装
+
+1. 简单方法：下载解压，然后执行`java -jar dic.jar hello`，帮助：`java -jar dic.jar -h`
+2. 查询离线数据库：`java -jar dic.jar -io -iw count`
+
 ###用法
 ```bash
 FetchWord [-m <outputType>][ -iw <word>|-is <file>][ -d <dir>|-of <file>][ -s <outputStyle> ][ -c <dictionary>][ -p <pronounceLocal>][ -e <executableMp3PlayerLocation>][ | -h]
