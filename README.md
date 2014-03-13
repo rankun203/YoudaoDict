@@ -3,7 +3,7 @@ YoudaoDict[![Build Status](https://drone.io/github.com/rankun203/YoudaoDict/stat
 描述：小词典，查询的是`Youdao Collins`的解释！
 没有其它解释，只有柯林斯，也就是说不能汉译英。
 
-最新0.2.1版下载地址：[百度网盘](http://pan.baidu.com/share/link?shareid=3649479366&uk=2684465378 "dist_0.2.1.7z")
+新鲜下载：[drone.io](https://drone.io/github.com/rankun203/YoudaoDict/files)
   
 性能指标：本机测试离线查询单词200ms之内，最近一次用wifi在线查询funny耗时764ms。
 
